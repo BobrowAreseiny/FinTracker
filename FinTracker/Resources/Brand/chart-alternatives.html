@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ФинТрек — альтернативы «Плитке»</title>
+<style>
+  :root {
+    --base: #0F0F11;
+    --card: #17171A;
+    --border: rgba(255,255,255,.08);
+    --text: #FFFFFF;
+    --muted: #9E9EA8;
+    --pink: #EC4899;
+    --violet: #8B5CF6;
+    --coral: #FB7185;
+    --cyan: #06B6D4;
+    --gray: #6B7280;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0B0B0D; color: var(--text); font-family: "Segoe UI", Inter, Roboto, Arial, sans-serif; }
+  .page { max-width: 1180px; margin: 0 auto; padding: 52px 36px 80px; }
+  .eyebrow { font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: #7E7E8B; margin: 0 0 12px; }
+  h1 { font-size: 30px; font-weight: 600; letter-spacing: -.03em; margin: 0 0 8px; }
+  .lead { color: #A6A6B2; font-size: 15px; line-height: 1.6; margin: 0 0 34px; max-width: 820px; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } .page { padding: 36px 20px 60px; } }
+  .option { background: #111114; border: 1px solid #25252D; border-radius: 24px; padding: 18px 18px 20px; }
+  .option-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .option-title { font-size: 15px; font-weight: 600; }
+  .tag { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #7E7E8B; border: 1px solid #2D2D36; border-radius: 999px; padding: 5px 9px; white-space: nowrap; }
+  .tag.rec { color: #D6C7FF; border-color: rgba(139,92,246,.4); background: rgba(139,92,246,.10); }
+  .stage { background: var(--base); border: 1px solid #222229; border-radius: 18px; padding: 20px; min-height: 240px; display: flex; align-items: center; justify-content: center; }
+  .desc { color: #8E8E9B; font-size: 12.5px; line-height: 1.5; margin: 14px 2px 0; min-height: 40px; }
+  .legend { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; }
+  .legend-row { display: grid; grid-template-columns: 10px 1fr auto auto; gap: 8px; align-items: center; font-size: 12px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .legend-row .name { color: #E4E4EA; }
+  .legend-row .amount { color: #FFFFFF; font-weight: 600; }
+  .legend-row .pct { color: #8E8E9B; width: 38px; text-align: right; }
+  svg { display: block; width: 100%; height: auto; }
+
+  .sharebar { display: flex; width: 100%; height: 22px; border-radius: 999px; overflow: hidden; gap: 2px; }
+  .sharebar span { display: block; height: 100%; }
+  .sharebar span:first-child { border-radius: 999px 0 0 999px; }
+  .sharebar span:last-child { border-radius: 0 999px 999px 0; }
+
+  .waffle { display: grid; grid-template-columns: repeat(10, 18px); grid-auto-rows: 18px; gap: 3px; }
+  .waffle i { display: block; border-radius: 3px; }
+
+  .halfwrap { position: relative; width: 100%; max-width: 320px; }
+  .half-center { position: absolute; left: 0; right: 0; top: 58%; transform: translateY(-50%); text-align: center; pointer-events: none; }
+  .half-center .cap { color: #8E8E9B; font-size: 11px; }
+  .half-center .sum { font-size: 24px; font-weight: 700; letter-spacing: -.03em; margin-top: 2px; }
+  .footer-note { margin-top: 28px; border: 1px solid #25252D; background: #111114; border-radius: 18px; padding: 18px 20px; color: #8E8E9B; font-size: 12.5px; line-height: 1.6; }
+  .footer-note b { color: #D8D8E0; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="eyebrow">ФинТрек · динамика</p>
+  <h1>Чем заменить «Плитку»</h1>
+  <p class="lead">Все варианты без подписей внутри — категории и суммы остаются в списке под графиком. Выбери вариант, и я внедрю его вместо плитки, с выделением по тапу.</p>
+
+  <div class="grid">
+
+    <!-- Bubbles -->
+    <article class="option">
+      <div class="option-head">
+        <div class="option-title">1. Пузыри</div>
+        <span class="tag rec">рекомендую</span>
+      </div>
+      <div class="stage">
+        <svg viewBox="0 0 320 190" aria-label="Пузыри категорий">
+          <circle cx="120" cy="92" r="58" fill="#EC4899"/>
+          <circle cx="235" cy="100" r="48" fill="#8B5CF6" stroke="#FFFFFF" stroke-width="2.5"/>
+          <circle cx="50" cy="150" r="22" fill="#FB7185"/>
+          <circle cx="275" cy="42" r="21" fill="#06B6D4"/>
+          <circle cx="48" cy="52" r="15" fill="#6B7280"/>
+        </svg>
+      </div>
+      <div class="legend">
+        <div class="legend-row"><span class="dot" style="background:#EC4899"></span><span class="name">Продукты</span><span class="amount">595 Br</span><span class="pct">48%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#8B5CF6"></span><span class="name">Жильё и связь</span><span class="amount">420 Br</span><span class="pct">34%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#FB7185"></span><span class="name">Abova</span><span class="amount">100 Br</span><span class="pct">8%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#06B6D4"></span><span class="name">Транспорт</span><span class="amount">94 Br</span><span class="pct">8%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#6B7280"></span><span class="name">Другое</span><span class="amount">42 Br</span><span class="pct">2%</span></div>
+      </div>
+      <p class="desc">Размер круга = сумма. Тап по кругу выделяет категорию, повторный — снимает. Живее плитки, хорошо читается на телефоне.</p>
+    </article>
+
+    <!-- Shares bar -->
+    <article class="option">
+      <div class="option-head">
+        <div class="option-title">2. Доли</div>
+        <span class="tag">строгий</span>
+      </div>
+      <div class="stage">
+        <div style="width:100%; max-width:320px">
+          <div class="sharebar">
+            <span style="width:48%; background:#EC4899"></span>
+            <span style="width:34%; background:#8B5CF6"></span>
+            <span style="width:8%; background:#FB7185"></span>
+            <span style="width:8%; background:#06B6D4"></span>
+            <span style="width:2%; background:#6B7280"></span>
+          </div>
+          <div style="display:flex; justify-content:space-between; color:#8E8E9B; font-size:10.5px; margin-top:10px">
+            <span>0%</span><span>50%</span><span>100%</span>
+          </div>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-row"><span class="dot" style="background:#EC4899"></span><span class="name">Продукты</span><span class="amount">595 Br</span><span class="pct">48%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#8B5CF6"></span><span class="name">Жильё и связь</span><span class="amount">420 Br</span><span class="pct">34%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#FB7185"></span><span class="name">Abova</span><span class="amount">100 Br</span><span class="pct">8%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#06B6D4"></span><span class="name">Транспорт</span><span class="amount">94 Br</span><span class="pct">8%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#6B7280"></span><span class="name">Другое</span><span class="amount">42 Br</span><span class="pct">2%</span></div>
+      </div>
+      <p class="desc">Одна полоса 100%. Самый компактный и строгий вариант: хорошо смотрится рядом с лимитом и не перегружает экран.</p>
+    </article>
+
+    <!-- Waffle -->
+    <article class="option">
+      <div class="option-head">
+        <div class="option-title">3. Вафля</div>
+        <span class="tag">наглядно</span>
+      </div>
+      <div class="stage">
+        <div id="waffle" class="waffle" aria-label="Вафельная диаграмма категорий"></div>
+      </div>
+      <div class="legend">
+        <div class="legend-row"><span class="dot" style="background:#EC4899"></span><span class="name">Продукты</span><span class="amount">595 Br</span><span class="pct">48%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#8B5CF6"></span><span class="name">Жильё и связь</span><span class="amount">420 Br</span><span class="pct">34%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#FB7185"></span><span class="name">Abova</span><span class="amount">100 Br</span><span class="pct">8%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#06B6D4"></span><span class="name">Транспорт</span><span class="amount">94 Br</span><span class="pct">8%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#6B7280"></span><span class="name">Другое</span><span class="amount">42 Br</span><span class="pct">2%</span></div>
+      </div>
+      <p class="desc">100 клеток = 100%. Доли видны буквально по клеткам. Подписи не нужны — расшифровка ниже.</p>
+    </article>
+
+    <!-- Half circle -->
+    <article class="option">
+      <div class="option-head">
+        <div class="option-title">4. Полукруг</div>
+        <span class="tag">компромисс</span>
+      </div>
+      <div class="stage">
+        <div class="halfwrap">
+          <svg id="half" viewBox="0 0 320 190" aria-label="Полукруговая диаграмма категорий"></svg>
+          <div class="half-center">
+            <div class="cap">Всего расходов</div>
+            <div class="sum">1 251 Br</div>
+          </div>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="legend-row"><span class="dot" style="background:#EC4899"></span><span class="name">Продукты</span><span class="amount">595 Br</span><span class="pct">48%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#8B5CF6"></span><span class="name">Жильё и связь</span><span class="amount">420 Br</span><span class="pct">34%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#FB7185"></span><span class="name">Abova</span><span class="amount">100 Br</span><span class="pct">8%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#06B6D4"></span><span class="name">Транспорт</span><span class="amount">94 Br</span><span class="pct">8%</span></div>
+        <div class="legend-row"><span class="dot" style="background:#6B7280"></span><span class="name">Другое</span><span class="amount">42 Br</span><span class="pct">2%</span></div>
+      </div>
+      <p class="desc">Полукруг с долями и итогом внутри. Мягче полного пончика и компактнее плитки.</p>
+    </article>
+
+  </div>
+
+  <div class="footer-note">
+    <b>Итог:</b> «Пузыри» — самый живой вариант; «Доли» — самый строгий; «Вафля» — самый наглядный по процентам; «Полукруг» — между пончиком и компактностью.
+    Скажи номер — заменю «Плитку», добавлю выделение по тапу и оставлю категории списком ниже.
+  </div>
+</div>
+
+<script>
+  // Waffle
+  const waffle = document.getElementById('waffle');
+  const blocks = [
+    { n: 48, c: '#EC4899' },
+    { n: 34, c: '#8B5CF6' },
+    { n: 8,  c: '#FB7185' },
+    { n: 8,  c: '#06B6D4' },
+    { n: 2,  c: '#6B7280' }
+  ];
+  blocks.forEach(b => {
+    for (let i = 0; i < b.n; i++) {
+      const cell = document.createElement('i');
+      cell.style.background = b.c;
+      waffle.appendChild(cell);
+    }
+  });
+
+  // Half circle
+  const svg = document.getElementById('half');
+  const data = [
+    { v: 48, c: '#EC4899' },
+    { v: 34, c: '#8B5CF6' },
+    { v: 8,  c: '#FB7185' },
+    { v: 8,  c: '#06B6D4' },
+    { v: 2,  c: '#6B7280' }
+  ];
+  const cx = 160, cy = 155, r = 108;
+  const NS = 'http://www.w3.org/2000/svg';
+  let angle = Math.PI;
+  const gap = 0.018;
+  data.forEach((d, i) => {
+    const sweep = d.v / 100 * Math.PI;
+    const a0 = angle - (i === 0 ? 0 : gap / 2);
+    const a1 = angle - sweep + (i === data.length - 1 ? 0 : gap / 2);
+    const p0 = { x: cx + r * Math.cos(a0), y: cy - r * Math.sin(a0) };
+    const p1 = { x: cx + r * Math.cos(a1), y: cy - r * Math.sin(a1) };
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', `M ${p0.x.toFixed(2)} ${p0.y.toFixed(2)} A ${r} ${r} 0 0 1 ${p1.x.toFixed(2)} ${p1.y.toFixed(2)}`);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', d.c);
+    path.setAttribute('stroke-width', '22');
+    path.setAttribute('stroke-linecap', 'butt');
+    svg.appendChild(path);
+    angle -= sweep;
+  });
+</script>
+</body>
+</html>

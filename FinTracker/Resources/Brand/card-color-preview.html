@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ФинТрек — цвет карточек</title>
+<style>
+  :root { --accent: #EC4899; --base: #121212; --text: #FFFFFF; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0B0B0D; color: var(--text); font-family: "Segoe UI", "Inter", Roboto, Arial, sans-serif; }
+  .page { max-width: 1180px; margin: 0 auto; padding: 52px 36px 80px; }
+  .eyebrow { font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: #7E7E8B; margin: 0 0 12px; }
+  h1 { font-size: 30px; font-weight: 600; letter-spacing: -.03em; margin: 0 0 8px; }
+  .lead { color: #A6A6B2; font-size: 15px; line-height: 1.6; margin: 0 0 8px; max-width: 800px; }
+  .note { color: #7E7E8B; font-size: 12.5px; margin: 0 0 32px; }
+  .note b { color: var(--accent); font-weight: 600; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } .page { padding: 36px 20px 60px; } }
+  .option { background: #111114; border: 1px solid #25252D; border-radius: 24px; padding: 18px 18px 20px; }
+  .option-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .option-title { font-size: 15px; font-weight: 600; }
+  .option-desc { color: #8E8E9B; font-size: 12.5px; line-height: 1.5; margin: 12px 2px 0; min-height: 52px; }
+  .tag { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #7E7E8B; border: 1px solid #2D2D36; border-radius: 999px; padding: 5px 9px; white-space: nowrap; }
+  .tag.rec { color: #F9A8D4; border-color: rgba(236,72,153,.35); background: rgba(236,72,153,.08); }
+  .swatches { display: flex; gap: 5px; }
+  .swatches span { width: 16px; height: 16px; border-radius: 6px; border: 1px solid rgba(255,255,255,.12); }
+
+  .stage { background: var(--base); border: 1px solid #222229; border-radius: 18px; padding: 22px; overflow: hidden; }
+  .mock { width: min(100%, 340px); margin: 0 auto; }
+  .hero {
+    position: relative; overflow: hidden; isolation: isolate;
+    border: 1px solid var(--border);
+    border-radius: 22px; padding: 17px 17px 0;
+    background: linear-gradient(160deg, var(--card2) 0%, var(--card) 100%);
+    box-shadow: 0 0 30px var(--glow);
+  }
+  .hero > * { position: relative; z-index: 2; }
+  .hero::before {
+    content: ""; position: absolute; inset: -70px -60px auto -60px; height: 250px; z-index: 0;
+    background: radial-gradient(circle at 72% 32%, var(--bloom) 0%, transparent 68%);
+    filter: blur(12px);
+  }
+  .hero-top { display: flex; justify-content: space-between; font-size: 11.5px; color: #B7B7C2; }
+  .delta { color: #34D399; background: rgba(52,211,153,.10); border: 1px solid rgba(52,211,153,.18); border-radius: 999px; padding: 3px 8px; font-size: 10.5px; }
+  .amount { font-size: 29px; font-weight: 650; letter-spacing: -.035em; margin: 8px 0 12px; }
+  .chips { display: flex; gap: 6px; overflow: hidden; }
+  .chip { font-size: 10.5px; color: #C2C2CC; border: 1px solid rgba(255,255,255,.08); border-radius: 999px; padding: 4px 9px; white-space: nowrap; background: rgba(255,255,255,.035); }
+  .chip.active { color: #F9A8D4; border-color: rgba(236,72,153,.35); background: rgba(236,72,153,.12); }
+  .spark { display: block; width: 100%; height: 68px; margin-top: 7px; color: var(--accent); }
+  .spark .line { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+  .spark .fill { fill: rgba(236,72,153,.12); }
+  .mini {
+    margin-top: 10px; border: 1px solid var(--border); border-radius: 18px; padding: 12px 14px;
+    background: linear-gradient(160deg, var(--card2), var(--card));
+  }
+  .mini .row { display: flex; justify-content: space-between; font-size: 10.5px; color: #B7B7C2; }
+  .mini .muted { color: #8E8E9B; }
+  .bar { height: 7px; border-radius: 999px; background: rgba(255,255,255,.07); margin: 9px 0 7px; overflow: hidden; }
+  .bar span { display: block; width: 60%; height: 100%; border-radius: inherit; background: var(--accent); }
+  .mini .tiny { font-size: 9.5px; color: #7E7E8B; }
+
+  /* палитры */
+  .p0 { --card: #1E1E20; --card2: #26262A; --border: rgba(255,255,255,.06); --glow: rgba(236,72,153,.16); --bloom: rgba(236,72,153,.24); }
+  .p1 { --card: #221F1D; --card2: #292522; --border: rgba(255,220,190,.07); --glow: rgba(236,72,153,.14); --bloom: rgba(236,72,153,.22); }
+  .p2 { --card: #1B2028; --card2: #222A34; --border: rgba(150,180,255,.09); --glow: rgba(96,165,250,.14); --bloom: rgba(96,165,250,.20); }
+  .p3 { --card: #231A2E; --card2: #2B2038; --border: rgba(190,140,255,.11); --glow: rgba(168,85,247,.16); --bloom: rgba(236,72,153,.24); }
+  .p4 { --card: #151517; --card2: #1B1B1F; --border: rgba(255,255,255,.10); --glow: rgba(236,72,153,.12); --bloom: rgba(236,72,153,.20); }
+  .p5 { --card: #241E1A; --card2: #2C2420; --border: rgba(255,200,150,.08); --glow: rgba(236,72,153,.13); --bloom: rgba(236,72,153,.22); }
+  .p6 { --card: #261A22; --card2: #2F2029; --border: rgba(236,72,153,.14); --glow: rgba(236,72,153,.18); --bloom: rgba(236,72,153,.28); }
+
+  .footer-note { margin-top: 28px; border: 1px solid #25252D; background: #111114; border-radius: 18px; padding: 18px 20px; color: #8E8E9B; font-size: 12.5px; line-height: 1.6; }
+  .footer-note b { color: #D8D8E0; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="eyebrow">ФинТрек · оформление</p>
+  <h1>Цвет карточек + мягкая подсветка</h1>
+  <p class="lead">Здесь одинаковая мягкая подсветка (вариант A), чтобы сравнить именно цвет карточек. Любой цвет можно сочетать с любым вариантом подсветки из предыдущего превью.</p>
+  <p class="note">Превью в текущем акценте <b>розовый</b>. Карточки остаются тёмными, меняется только их оттенок и контраст с фоном.</p>
+
+  <div class="grid">
+
+    <div class="option p0">
+      <div class="option-head">
+        <div class="option-title">0. Графит — как сейчас</div>
+        <div class="swatches"><span style="background:#1E1E20"></span><span style="background:#26262A"></span></div>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="hero">
+            <div class="hero-top"><span>Общий баланс</span><span class="delta">▲ +2 316 Br</span></div>
+            <div class="amount">2 316 Br</div>
+            <div class="chips"><span class="chip active">Все счета</span><span class="chip">Основной</span><span class="chip">Наличные</span></div>
+            <svg class="spark" viewBox="0 0 260 62" preserveAspectRatio="none"><path class="fill" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7 L260 62 L0 62 Z"/><path class="line" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7"/></svg>
+          </div>
+          <div class="mini"><div class="row"><span>Лимит на месяц</span><span class="muted">Осталось 796 Br</span></div><div class="bar"><span></span></div><div class="row tiny"><span>Потрачено 1 204 Br из 2 000 Br</span><span>44 Br/дн</span></div></div>
+        </div>
+      </div>
+      <div class="option-desc">Нейтральный графит <b>#1E1E20</b>. Универсально, но немного «казённо».</div>
+    </div>
+
+    <div class="option p1">
+      <div class="option-head">
+        <div class="option-title">1. Тёплый графит</div>
+        <div class="swatches"><span style="background:#221F1D"></span><span style="background:#292522"></span></div>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="hero">
+            <div class="hero-top"><span>Общий баланс</span><span class="delta">▲ +2 316 Br</span></div>
+            <div class="amount">2 316 Br</div>
+            <div class="chips"><span class="chip active">Все счета</span><span class="chip">Основной</span><span class="chip">Наличные</span></div>
+            <svg class="spark" viewBox="0 0 260 62" preserveAspectRatio="none"><path class="fill" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7 L260 62 L0 62 Z"/><path class="line" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7"/></svg>
+          </div>
+          <div class="mini"><div class="row"><span>Лимит на месяц</span><span class="muted">Осталось 796 Br</span></div><div class="bar"><span></span></div><div class="row tiny"><span>Потрачено 1 204 Br из 2 000 Br</span><span>44 Br/дн</span></div></div>
+        </div>
+      </div>
+      <div class="option-desc"><b>#221F1D</b> — тёплый уголь. Карточки выглядят мягче и «дороже», хорошо сочетается с золотом и розовым.</div>
+    </div>
+
+    <div class="option p2">
+      <div class="option-head">
+        <div class="option-title">2. Холодный slate</div>
+        <div class="swatches"><span style="background:#1B2028"></span><span style="background:#222A34"></span></div>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="hero">
+            <div class="hero-top"><span>Общий баланс</span><span class="delta">▲ +2 316 Br</span></div>
+            <div class="amount">2 316 Br</div>
+            <div class="chips"><span class="chip active">Все счета</span><span class="chip">Основной</span><span class="chip">Наличные</span></div>
+            <svg class="spark" viewBox="0 0 260 62" preserveAspectRatio="none"><path class="fill" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7 L260 62 L0 62 Z"/><path class="line" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7"/></svg>
+          </div>
+          <div class="mini"><div class="row"><span>Лимит на месяц</span><span class="muted">Осталось 796 Br</span></div><div class="bar"><span></span></div><div class="row tiny"><span>Потрачено 1 204 Br из 2 000 Br</span><span>44 Br/дн</span></div></div>
+        </div>
+      </div>
+      <div class="option-desc"><b>#1B2028</b> — сине-графитовый. Более «технологичный» и строгий, хорошо с синим и фиолетовым акцентом.</div>
+    </div>
+
+    <div class="option p3">
+      <div class="option-head">
+        <div class="option-title">3. Глубокий слив</div>
+        <span class="tag rec">рекомендую</span>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="hero">
+            <div class="hero-top"><span>Общий баланс</span><span class="delta">▲ +2 316 Br</span></div>
+            <div class="amount">2 316 Br</div>
+            <div class="chips"><span class="chip active">Все счета</span><span class="chip">Основной</span><span class="chip">Наличные</span></div>
+            <svg class="spark" viewBox="0 0 260 62" preserveAspectRatio="none"><path class="fill" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7 L260 62 L0 62 Z"/><path class="line" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7"/></svg>
+          </div>
+          <div class="mini"><div class="row"><span>Лимит на месяц</span><span class="muted">Осталось 796 Br</span></div><div class="bar"><span></span></div><div class="row tiny"><span>Потрачено 1 204 Br из 2 000 Br</span><span>44 Br/дн</span></div></div>
+        </div>
+      </div>
+      <div class="option-desc"><b>#231A2E</b> — тёмный сливовый. Даёт глубину и связывает карточки с фиолетово-розовым акцентом.</div>
+    </div>
+
+    <div class="option p4">
+      <div class="option-head">
+        <div class="option-title">4. Чёрное стекло</div>
+        <div class="swatches"><span style="background:#151517"></span><span style="background:#1B1B1F"></span></div>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="hero">
+            <div class="hero-top"><span>Общий баланс</span><span class="delta">▲ +2 316 Br</span></div>
+            <div class="amount">2 316 Br</div>
+            <div class="chips"><span class="chip active">Все счета</span><span class="chip">Основной</span><span class="chip">Наличные</span></div>
+            <svg class="spark" viewBox="0 0 260 62" preserveAspectRatio="none"><path class="fill" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7 L260 62 L0 62 Z"/><path class="line" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7"/></svg>
+          </div>
+          <div class="mini"><div class="row"><span>Лимит на месяц</span><span class="muted">Осталось 796 Br</span></div><div class="bar"><span></span></div><div class="row tiny"><span>Потрачено 1 204 Br из 2 000 Br</span><span>44 Br/дн</span></div></div>
+        </div>
+      </div>
+      <div class="option-desc"><b>#151517</b> — почти чёрные карточки с более заметной рамкой. Максимальный контраст с фоном, минимализм.</div>
+    </div>
+
+    <div class="option p5">
+      <div class="option-head">
+        <div class="option-title">5. Мокко</div>
+        <div class="swatches"><span style="background:#241E1A"></span><span style="background:#2C2420"></span></div>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="hero">
+            <div class="hero-top"><span>Общий баланс</span><span class="delta">▲ +2 316 Br</span></div>
+            <div class="amount">2 316 Br</div>
+            <div class="chips"><span class="chip active">Все счета</span><span class="chip">Основной</span><span class="chip">Наличные</span></div>
+            <svg class="spark" viewBox="0 0 260 62" preserveAspectRatio="none"><path class="fill" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7 L260 62 L0 62 Z"/><path class="line" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7"/></svg>
+          </div>
+          <div class="mini"><div class="row"><span>Лимит на месяц</span><span class="muted">Осталось 796 Br</span></div><div class="bar"><span></span></div><div class="row tiny"><span>Потрачено 1 204 Br из 2 000 Br</span><span>44 Br/дн</span></div></div>
+        </div>
+      </div>
+      <div class="option-desc"><b>#241E1A</b> — тёмный кофе. Тёплый премиальный вариант, особенно с золотой монетой в логотипе.</div>
+    </div>
+
+    <div class="option p6">
+      <div class="option-head">
+        <div class="option-title">6. Авто-тинт от акцента</div>
+        <span class="tag">адаптивно</span>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="hero">
+            <div class="hero-top"><span>Общий баланс</span><span class="delta">▲ +2 316 Br</span></div>
+            <div class="amount">2 316 Br</div>
+            <div class="chips"><span class="chip active">Все счета</span><span class="chip">Основной</span><span class="chip">Наличные</span></div>
+            <svg class="spark" viewBox="0 0 260 62" preserveAspectRatio="none"><path class="fill" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7 L260 62 L0 62 Z"/><path class="line" d="M0 54 C24 52 44 49 66 40 S104 24 132 29 S188 18 214 12 S246 6 260 7"/></svg>
+          </div>
+          <div class="mini"><div class="row"><span>Лимит на месяц</span><span class="muted">Осталось 796 Br</span></div><div class="bar"><span></span></div><div class="row tiny"><span>Потрачено 1 204 Br из 2 000 Br</span><span>44 Br/дн</span></div></div>
+        </div>
+      </div>
+      <div class="option-desc">Карточка tint-ится выбранным акцентом на <b>6–8%</b>. При смене акцента цвет карточек подстраивается сам — выглядит цельно в любой теме.</div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    <b>Мой выбор:</b> вариант <b>3 (глубокий слив)</b> или <b>6 (авто-тинт)</b> — они лучше всего связывают карточки с текущим розовым/фиолетовым акцентом. Если хочется нейтральнее — <b>1 (тёплый графит)</b>. Скажи номер, и я внедрю его вместе с выбранной подсветкой.
+  </div>
+</div>
+</body>
+</html>

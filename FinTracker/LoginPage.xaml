@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FinTracker.LoginPage"
+             BackgroundColor="#0F0F11">
+
+    <Grid>
+        <!-- Мягкое фиолетовое свечение сверху -->
+        <Ellipse Fill="#1F8B5CF6" WidthRequest="320" HeightRequest="320"
+                 HorizontalOptions="Center" VerticalOptions="Start"
+                 TranslationY="-190" InputTransparent="True" />
+
+        <VerticalStackLayout VerticalOptions="Center" Spacing="18" Padding="32">
+
+            <Image Source="fintrack_logo.png" WidthRequest="300" Aspect="AspectFit"
+                   HorizontalOptions="Center" />
+
+            <Label x:Name="LoginStatusLabel" Text="Вход по отпечатку"
+                   FontFamily="Inter" FontSize="13" TextColor="#9A9AA5"
+                   HorizontalTextAlignment="Center" Margin="8,14,8,6" />
+
+            <Button x:Name="LoginButton" Text="Войти по отпечатку" Clicked="LoginButton_Clicked"
+                    BackgroundColor="#8B5CF6" TextColor="White" FontFamily="InterSemiBold"
+                    FontSize="15" CornerRadius="14" HeightRequest="50" Margin="0,4,0,0" />
+
+            <Button x:Name="SkipButton" Text="Пропустить" Clicked="SkipButton_Clicked"
+                    BackgroundColor="Transparent" TextColor="#8E8E9B" FontFamily="Inter"
+                    FontSize="13" HeightRequest="42" />
+
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

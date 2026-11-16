@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="FinTracker.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:FinTracker"
+    Title="ФинТрек"
+    FlyoutBehavior="Disabled">
+
+    <!--
+        Страница создаётся явно в AppShell.xaml.cs, а не через ContentTemplate:
+        DataTemplate создаёт страницу через Activator без DI и любая ошибка
+        конструктора превращается в молчаливый вылет приложения.
+    -->
+    <ShellContent
+        x:Name="MainShellContent"
+        Title="Обзор"
+        Route="MainPage" />
+
+</Shell>

@@ -1,0 +1,1697 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:FinTracker.Controls"
+             x:Class="FinTracker.MainPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{DynamicResource BaseColor}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Динамические токены палитры (Soft Matte Dark по умолчанию + Warm Milky Light) -->
+            <Color x:Key="BaseColor">#0F0F11</Color>
+            <Color x:Key="CardColor">#17171A</Color>
+            <Color x:Key="AccentPurple">#8B5CF6</Color>
+            <Color x:Key="SuccessGreen">#22C55E</Color>
+            <Color x:Key="DangerRed">#EF4444</Color>
+            <Color x:Key="WarningAmber">#F59E0B</Color>
+            <Color x:Key="TextPrimary">#FFFFFF</Color>
+            <Color x:Key="TextSecondaryColor">#9E9E9E</Color>
+            <Color x:Key="HairlineColor">#1AFFFFFF</Color>
+            <Color x:Key="SubtleSurface">#0AFFFFFF</Color>
+            <Color x:Key="TrackColor">#66000000</Color>
+            <Color x:Key="EditorBoxBg">#59000000</Color>
+
+            <!-- Карточка Soft Matte: радиус 24, тонкая рамка -->
+            <Style x:Key="Card" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="{DynamicResource CardColor}" />
+                <Setter Property="Stroke" Value="{DynamicResource HairlineColor}" />
+                <Setter Property="StrokeThickness" Value="1" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 24" />
+                <Setter Property="Padding" Value="20" />
+                <Setter Property="Shadow">
+                    <Setter.Value>
+                        <Shadow Brush="#000000" Offset="0,6" Radius="20" Opacity="0.30" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="InnerBox" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="{DynamicResource SubtleSurface}" />
+                <Setter Property="Stroke" Value="{DynamicResource HairlineColor}" />
+                <Setter Property="StrokeThickness" Value="1" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+                <Setter Property="Padding" Value="14" />
+            </Style>
+
+            <!-- Нижняя iOS-шторка -->
+            <Style x:Key="Sheet" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="{DynamicResource CardColor}" />
+                <Setter Property="Stroke" Value="{DynamicResource HairlineColor}" />
+                <Setter Property="StrokeThickness" Value="1" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 30,30,0,0" />
+                <Setter Property="Padding" Value="20,0,20,26" />
+                <Setter Property="VerticalOptions" Value="End" />
+                <Setter Property="Shadow">
+                    <Setter.Value>
+                        <Shadow Brush="#000000" Offset="0,-10" Radius="30" Opacity="0.5" />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="RoundBtn" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="{DynamicResource CardColor}" />
+                <Setter Property="Stroke" Value="{DynamicResource HairlineColor}" />
+                <Setter Property="StrokeThickness" Value="1" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 999" />
+                <Setter Property="WidthRequest" Value="36" />
+                <Setter Property="HeightRequest" Value="36" />
+                <Setter Property="Padding" Value="0" />
+            </Style>
+
+            <Style x:Key="PageSub" TargetType="Label">
+                <Setter Property="FontFamily" Value="InterMedium" />
+                <Setter Property="FontSize" Value="12.5" />
+                <Setter Property="TextColor" Value="{DynamicResource TextSecondaryColor}" />
+            </Style>
+
+            <Style x:Key="PageTitle" TargetType="Label">
+                <Setter Property="FontFamily" Value="InterBold" />
+                <Setter Property="FontSize" Value="25" />
+                <Setter Property="TextColor" Value="{DynamicResource TextPrimary}" />
+            </Style>
+
+            <Style x:Key="CardHeading" TargetType="Label">
+                <Setter Property="FontFamily" Value="InterSemiBold" />
+                <Setter Property="FontSize" Value="15.5" />
+                <Setter Property="TextColor" Value="{DynamicResource TextPrimary}" />
+            </Style>
+
+            <Style x:Key="HeroAmount" TargetType="Label">
+                <Setter Property="FontFamily" Value="InterBold" />
+                <Setter Property="FontSize" Value="33" />
+                <Setter Property="TextColor" Value="{DynamicResource TextPrimary}" />
+            </Style>
+
+            <Style x:Key="FieldBox" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="{DynamicResource SubtleSurface}" />
+                <Setter Property="Stroke" Value="{DynamicResource HairlineColor}" />
+                <Setter Property="StrokeThickness" Value="1" />
+                <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+                <Setter Property="Padding" Value="16,4" />
+            </Style>
+
+            <Style x:Key="FieldEntry" TargetType="Entry">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="TextColor" Value="{DynamicResource TextPrimary}" />
+                <Setter Property="PlaceholderColor" Value="{DynamicResource TextSecondaryColor}" />
+                <Setter Property="FontFamily" Value="InterMedium" />
+                <Setter Property="FontSize" Value="15" />
+                <Setter Property="HeightRequest" Value="44" />
+            </Style>
+
+            <Style x:Key="Muted" TargetType="Label">
+                <Setter Property="FontFamily" Value="Inter" />
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="TextColor" Value="{DynamicResource TextSecondaryColor}" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid x:Name="RootGrid" BackgroundColor="{DynamicResource BaseColor}">
+
+        <!-- ================= ОСНОВНОЙ КОНТЕЙНЕР ================= -->
+        <Grid x:Name="AppHost" RowDefinitions="Auto,*,Auto" BackgroundColor="{DynamicResource BaseColor}">
+
+            <!-- HEADER -->
+            <Grid x:Name="HeaderGrid" Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="20,18,20,12" BackgroundColor="{DynamicResource BaseColor}">
+                <HorizontalStackLayout Grid.Column="0" Spacing="10" VerticalOptions="Center">
+                    <Image x:Name="LogoBadge" Source="fintrack_mark.png" WidthRequest="32" HeightRequest="32"
+                           Aspect="AspectFit" VerticalOptions="Center">
+                        <Image.Shadow>
+                            <Shadow x:Name="LogoShadow" Brush="#8B5CF6" Offset="0,4" Radius="16" Opacity="0.45" />
+                        </Image.Shadow>
+                    </Image>
+                    <Label Text="ФинТрек" FontFamily="InterSemiBold" FontSize="18"
+                           TextColor="{DynamicResource TextPrimary}" VerticalTextAlignment="Center" />
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+                    <Border x:Name="HeaderThemeButton" Style="{StaticResource RoundBtn}">
+                        <controls:LucideIcon x:Name="HeaderThemeIcon" Icon="sun" Size="16" Tint="#9E9E9E" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnToggleThemeTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Border x:Name="TagsButton" Style="{StaticResource RoundBtn}">
+                        <controls:LucideIcon x:Name="TagsIcon" Icon="tags" Size="16" Tint="#9E9E9E" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnOpenCategoryManagerTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Border x:Name="CurrencyButton" Style="{StaticResource RoundBtn}"
+                            WidthRequest="-1" HeightRequest="36" Padding="12,0">
+                        <Label x:Name="HeaderCurrencyLabel" Text="BYN • Br" FontFamily="InterSemiBold"
+                               FontSize="11.5" TextColor="{DynamicResource AccentPurple}"
+                               VerticalTextAlignment="Center" HorizontalTextAlignment="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnCycleCurrencyTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Border x:Name="PrivacyButton" Style="{StaticResource RoundBtn}">
+                        <controls:LucideIcon x:Name="PrivacyIcon" Icon="eye-off" Size="16" Tint="#9E9E9E" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnTogglePrivacyTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </HorizontalStackLayout>
+            </Grid>
+
+            <!-- СКРОЛЛИРУЕМАЯ ОБЛАСТЬ -->
+            <ScrollView Grid.Row="1" x:Name="MainScroll" VerticalScrollBarVisibility="Never">
+                <VerticalStackLayout Padding="16,4,16,120" Spacing="14">
+
+                    <!-- ===================== ВКЛАДКА 1: ГЛАВНАЯ ===================== -->
+                    <VerticalStackLayout x:Name="TabMain" Spacing="26">
+
+                        <Grid ColumnDefinitions="*,Auto" Padding="4,0,4,2" Margin="0,0,0,2">
+                            <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="End">
+                                <Label Text="Личный бюджет" Style="{StaticResource PageSub}" IsVisible="False" />
+                                <Label Text="Обзор" Style="{StaticResource PageTitle}" />
+                            </VerticalStackLayout>
+                            <controls:SegmentedControl Grid.Column="1" x:Name="PeriodSegMain" VerticalOptions="End" />
+                        </Grid>
+
+                        <!-- Карточка 1: баланс и график с неоновым свечением -->
+                        <Border x:Name="MainHeroCard" Style="{StaticResource Card}" Padding="0">
+                            <Grid IsClippedToBounds="True">
+                                <Ellipse x:Name="OrbMainHero" WidthRequest="190" HeightRequest="190"
+                                         HorizontalOptions="End" VerticalOptions="Start"
+                                         Margin="0,-64,-64,0" Fill="#268B5CF6" InputTransparent="True" />
+
+                                <VerticalStackLayout Padding="20" Spacing="0">
+                                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,6">
+                                        <Label Grid.Column="0" Text="Общий баланс" FontFamily="InterMedium"
+                                               FontSize="13.5" TextColor="{DynamicResource TextSecondaryColor}"
+                                               VerticalTextAlignment="Center" />
+                                        <Border Grid.Column="1" x:Name="DeltaBadge" BackgroundColor="#1A22C55E"
+                                                StrokeThickness="0" StrokeShape="RoundRectangle 999" Padding="10,2">
+                                            <Label x:Name="DeltaBadgeLabel" Text="▲ +0 Br" FontFamily="InterSemiBold"
+                                                   FontSize="11.5" TextColor="{StaticResource SuccessGreen}" />
+                                        </Border>
+                                    </Grid>
+
+                                    <Label x:Name="HeroBalanceLabel" Text="0 Br" Style="{StaticResource HeroAmount}"
+                                           Margin="0,0,0,14" />
+
+                                    <!-- Пилюли счетов переносятся на новую строку: без горизонтального свайпа -->
+                                    <FlexLayout x:Name="AccountPillsStack" Wrap="Wrap" Direction="Row"
+                                                JustifyContent="Start" AlignContent="Start" AlignItems="Center"
+                                                Margin="0,0,0,8" />
+
+                                    <HorizontalStackLayout Spacing="20" Margin="0,0,0,6">
+                                        <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                            <Border WidthRequest="22" HeightRequest="22" StrokeThickness="0" 
+                StrokeShape="RoundRectangle 999" BackgroundColor="#2622C55E" VerticalOptions="Center">
+                                                <controls:LucideIcon Icon="arrow-down-left" Size="12" Tint="{StaticResource SuccessGreen}" 
+                                 Stroke="2.5" HorizontalOptions="Center" VerticalOptions="Center" />
+                                            </Border>
+                                            <Label Text="Доход:" FontFamily="InterMedium" FontSize="12.5"
+               TextColor="{StaticResource SuccessGreen}" VerticalTextAlignment="Center" />
+                                            <Label x:Name="IncomeValueLabel" Text="+0 Br" FontFamily="InterSemiBold"
+               FontSize="12.5" TextColor="{StaticResource SuccessGreen}"
+               VerticalTextAlignment="Center" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                            <Border WidthRequest="22" HeightRequest="22" StrokeThickness="0" 
+                StrokeShape="RoundRectangle 999" BackgroundColor="#26EF4444" VerticalOptions="Center">
+                                                <controls:LucideIcon Icon="arrow-up-right" Size="12" Tint="{StaticResource DangerRed}" 
+                                 Stroke="2.5" HorizontalOptions="Center" VerticalOptions="Center" />
+                                            </Border>
+                                            <Label Text="Расход:" FontFamily="InterMedium" FontSize="12.5"
+               TextColor="{StaticResource DangerRed}" VerticalTextAlignment="Center" />
+                                            <Label x:Name="ExpenseValueLabel" Text="–0 Br" FontFamily="InterSemiBold"
+               FontSize="12.5" TextColor="{StaticResource DangerRed}"
+               VerticalTextAlignment="Center" />
+                                        </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <GraphicsView x:Name="OverviewChart" HeightRequest="118" MinimumHeightRequest="118"
+                                                  MaximumHeightRequest="118" VerticalOptions="Start" Margin="0,8,0,0" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+
+                        <!-- Карточка 2: умный лимит -->
+                        <Border x:Name="LimitCard" Style="{StaticResource Card}">
+                            <VerticalStackLayout Spacing="0">
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                                    <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
+                                        <Label x:Name="LimitTitleLabel" Text="Лимит на месяц" FontFamily="InterSemiBold"
+                                               FontSize="14.5" TextColor="{DynamicResource TextPrimary}" VerticalTextAlignment="Center" />
+                                        <Border x:Name="LimitStatusDot" WidthRequest="8" HeightRequest="8"
+                                                StrokeThickness="0" StrokeShape="RoundRectangle 999"
+                                                BackgroundColor="{DynamicResource AccentPurple}" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+
+                                    <Border Grid.Column="1" BackgroundColor="{DynamicResource SubtleSurface}"
+                                            Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 999" Padding="10,4">
+                                        <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                            <Label x:Name="LimitRemainLabel" Text="Осталось: 0 Br" FontSize="12"
+                                                   FontFamily="Inter" TextColor="{DynamicResource TextSecondaryColor}"
+                                                   VerticalTextAlignment="Center" />
+                                            <controls:LucideIcon x:Name="LimitEditIcon" Icon="pen-line" Size="12"
+                                                                 Tint="{DynamicResource AccentPurple}" />
+                                        </HorizontalStackLayout>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnOpenLimitSheetTapped" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                </Grid>
+                                <AbsoluteLayout x:Name="LimitTrack" HeightRequest="10" Margin="0,2,0,10">
+                                    <Border AbsoluteLayout.LayoutBounds="0,0,1,10" AbsoluteLayout.LayoutFlags="WidthProportional"
+            StrokeThickness="0" StrokeShape="RoundRectangle 999"
+            BackgroundColor="{DynamicResource TrackColor}" />
+                                    <Border x:Name="LimitPaceFill" AbsoluteLayout.LayoutBounds="0,0,0.85,10"
+            AbsoluteLayout.LayoutFlags="WidthProportional" StrokeThickness="0"
+            StrokeShape="RoundRectangle 999" BackgroundColor="#1AFFFFFF" />
+                                    <Border x:Name="LimitBarFill" AbsoluteLayout.LayoutBounds="0,0,0.5,10"
+            AbsoluteLayout.LayoutFlags="WidthProportional" StrokeThickness="0"
+            StrokeShape="RoundRectangle 999" BackgroundColor="{DynamicResource AccentPurple}" />
+                                    <Border x:Name="LimitPaceMarker" AbsoluteLayout.LayoutBounds="0.3,-3,2,16"
+            AbsoluteLayout.LayoutFlags="XProportional" StrokeThickness="0"
+            StrokeShape="RoundRectangle 999" BackgroundColor="#CCFFFFFF" />
+                                </AbsoluteLayout>
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label x:Name="LimitSpentLabel" Grid.Column="0" Text="Потрачено 0 Br из 0 Br (0%)"
+                                           FontSize="11.5" FontFamily="Inter"
+                                           TextColor="{DynamicResource TextSecondaryColor}" VerticalTextAlignment="Center" />
+                                    <Border Grid.Column="1" BackgroundColor="{DynamicResource SubtleSurface}" StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 6" Padding="8,2">
+                                        <Label x:Name="LimitDailyLabel" Text="Можно тратить: 0 Br/дн" FontFamily="InterMedium"
+                                               FontSize="11.5" TextColor="{DynamicResource TextPrimary}" LineBreakMode="NoWrap" />
+                                    </Border>
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Карточка 3: последние операции -->
+                        <Border x:Name="TransactionsCard" Style="{StaticResource Card}">
+                            <VerticalStackLayout Spacing="0">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="0,0,0,10"
+                                      MinimumHeightRequest="40">
+                                    <VerticalStackLayout x:Name="TxTitleBlock" Grid.Column="0" Spacing="2" VerticalOptions="Center">
+                                        <Label Text="Последние операции" Style="{StaticResource CardHeading}" />
+                                        <Label x:Name="TxHintLabel" Text="" IsVisible="False" Style="{StaticResource Muted}" />
+                                    </VerticalStackLayout>
+
+                                    <!-- Поиск живёт в той же строке, что и заголовок: список не сдвигается -->
+                                    <Border x:Name="SearchWrap" Grid.Column="0" IsVisible="False" HeightRequest="40"
+                                            VerticalOptions="Center"
+                                            BackgroundColor="{DynamicResource TrackColor}"
+                                            Stroke="#668B5CF6" StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 14" Padding="12,2">
+                                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                                            <controls:LucideIcon x:Name="SearchBoxIcon" Grid.Column="0" Icon="search" Size="16"
+                                                                 Tint="{DynamicResource AccentPurple}" />
+                                            <Entry Grid.Column="1" x:Name="TxSearchEntry" Style="{StaticResource FieldEntry}"
+                                                   HeightRequest="34" FontSize="13" Placeholder="Поиск по операциям..."
+                                                   TextChanged="OnTxSearchTextChanged" />
+                                            <Border Grid.Column="2" WidthRequest="26" HeightRequest="26"
+                                                    StrokeThickness="0" StrokeShape="RoundRectangle 999"
+                                                    BackgroundColor="Transparent">
+                                                <controls:LucideIcon Icon="x" Size="14" Tint="#9E9E9E" />
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnClearSearchTapped" />
+                                                </Border.GestureRecognizers>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+
+                                    <HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                        <Border x:Name="SearchToggleButton" WidthRequest="28" HeightRequest="28"
+                                                BackgroundColor="{DynamicResource SubtleSurface}"
+                                                Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 999" Padding="0">
+                                            <controls:LucideIcon x:Name="SearchToggleIcon" Icon="search" Size="13" Tint="#9E9E9E" />
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="OnToggleSearchTapped" />
+                                            </Border.GestureRecognizers>
+                                        </Border>
+
+                                        <Border x:Name="ResetFiltersButton" WidthRequest="28" HeightRequest="28"
+                                                BackgroundColor="{DynamicResource SubtleSurface}"
+                                                Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 999" Padding="0">
+                                            <controls:LucideIcon Icon="rotate-ccw" Size="13" Tint="#9E9E9E" />
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="OnResetFiltersTapped" />
+                                            </Border.GestureRecognizers>
+                                        </Border>
+                                    </HorizontalStackLayout>
+                                </Grid>
+
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="0,0,0,14"
+                                      MinimumHeightRequest="30">
+                                    <Grid Grid.Column="0" VerticalOptions="Center">
+                                        <controls:SegmentedControl x:Name="TxTypeSeg" FontSize="10.5"
+                                                                   ItemPadding="8,3" HorizontalOptions="Start" VerticalOptions="Center" />
+                                        <Grid x:Name="TxSelectionActionsHost" IsVisible="False" ColumnSpacing="8" />
+                                    </Grid>
+
+                                    <Border Grid.Column="1" x:Name="SelectModeButton" HeightRequest="30"
+                                            BackgroundColor="{DynamicResource SubtleSurface}"
+                                            Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 999" Padding="11,0" VerticalOptions="Center">
+                                        <HorizontalStackLayout Spacing="6">
+                                            <controls:LucideIcon x:Name="SelectModeIcon" Icon="list-checks" Size="13" Tint="#9E9E9E" />
+                                            <Label x:Name="SelectModeLabel" Text="Выбрать" FontFamily="InterMedium" FontSize="11.5"
+                                                   TextColor="#9E9E9E" VerticalTextAlignment="Center" />
+                                        </HorizontalStackLayout>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnToggleSelectionModeTapped" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                </Grid>
+
+                                <VerticalStackLayout x:Name="TxListContainer" Spacing="16" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- ===================== ВКЛАДКА 2: АНАЛИТИКА ===================== -->
+                    <VerticalStackLayout x:Name="TabAnalytics" IsVisible="False" Spacing="14">
+
+                        <Grid ColumnDefinitions="*,Auto" Padding="4,0,4,2">
+                            <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="End">
+                                <Label Text="Структура и темп" Style="{StaticResource PageSub}" IsVisible="False" />
+                                <Label Text="Аналитика" Style="{StaticResource PageTitle}" />
+                            </VerticalStackLayout>
+                            <controls:SegmentedControl Grid.Column="1" x:Name="PeriodSegAnalytics" VerticalOptions="End" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="0,0,0,2">
+                            <controls:SegmentedControl Grid.Column="0" x:Name="AnalyticsModeSeg" FontSize="12.5" />
+                            <controls:SegmentedControl Grid.Column="1" x:Name="AnalyticsFlowSeg" FontSize="12.5" />
+                        </Grid>
+
+                        <Border x:Name="AnalyticsRatioCard" Style="{StaticResource Card}" Padding="16,14">
+                            <VerticalStackLayout Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <HorizontalStackLayout Grid.Column="0" Spacing="12" VerticalOptions="Center">
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Label Text="Доход:" FontSize="12" FontFamily="Inter"
+                                                   TextColor="{DynamicResource TextSecondaryColor}" VerticalTextAlignment="Center" />
+                                            <Label x:Name="AnIncomeLabel" Text="0 Br" FontSize="12" FontFamily="InterSemiBold"
+                                                   TextColor="{StaticResource SuccessGreen}" VerticalTextAlignment="Center" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Label Text="Расход:" FontSize="12" FontFamily="Inter"
+                                                   TextColor="{DynamicResource TextSecondaryColor}" VerticalTextAlignment="Center" />
+                                            <Label x:Name="AnExpenseLabel" Text="0 Br" FontSize="12" FontFamily="InterSemiBold"
+                                                   TextColor="{StaticResource DangerRed}" VerticalTextAlignment="Center" />
+                                        </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <Border Grid.Column="1" BackgroundColor="{DynamicResource SubtleSurface}" StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 999" Padding="8,2">
+                                        <Label x:Name="AnRatioLabel" Text="0,0×" FontSize="11.5" FontFamily="Inter"
+                                               TextColor="{DynamicResource TextSecondaryColor}" />
+                                    </Border>
+                                </Grid>
+
+                                <AbsoluteLayout x:Name="AnBarHost" HeightRequest="8">
+                                    <Border AbsoluteLayout.LayoutBounds="0,0,1,8" AbsoluteLayout.LayoutFlags="WidthProportional"
+                                            BackgroundColor="{DynamicResource TrackColor}" StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 999" />
+                                    <Border x:Name="AnExpenseFill" AbsoluteLayout.LayoutBounds="0,0,0.33,8"
+                                            AbsoluteLayout.LayoutFlags="WidthProportional"
+                                            StrokeThickness="0" StrokeShape="RoundRectangle 999"
+                                            BackgroundColor="{StaticResource DangerRed}" />
+                                </AbsoluteLayout>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Style="{StaticResource Card}" Padding="16,14">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Border Grid.Column="0" WidthRequest="32" HeightRequest="32"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 12"
+                                        BackgroundColor="#268B5CF6" VerticalOptions="Start">
+                                    <controls:LucideIcon Icon="target" Size="16"
+                                                         Tint="{DynamicResource AccentPurple}" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="3">
+                                    <Label Text="Рекомендация" FontFamily="InterSemiBold" FontSize="12.5"
+                                           TextColor="{DynamicResource AccentPurple}" />
+                                    <Label x:Name="AnalyticsAdviceLabel" Text="—" FontFamily="Inter" FontSize="12.5"
+                                           TextColor="{DynamicResource TextPrimary}" LineBreakMode="WordWrap" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+
+                        <!-- Подвкладка «Категории» -->
+                        <VerticalStackLayout x:Name="AnalyticsCategoriesSection" Spacing="14">
+                            <Border x:Name="AnalyticsDonutCard" Style="{StaticResource Card}" Padding="0">
+                                <Grid IsClippedToBounds="True">
+                                    <Ellipse x:Name="OrbAnalyticsDonut" WidthRequest="208" HeightRequest="208"
+                                             HorizontalOptions="Center" VerticalOptions="Start"
+                                             Margin="0,-80,0,0" Fill="#1A8B5CF6" InputTransparent="True" />
+
+                                    <VerticalStackLayout Padding="20" Spacing="0">
+                                        <Grid HeightRequest="196" Margin="0,4,0,16">
+                                            <GraphicsView x:Name="DonutChart" WidthRequest="196" HeightRequest="196"
+                                                          HorizontalOptions="Center" />
+                                            <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center"
+                                                                 Spacing="1" InputTransparent="True">
+                                                <Label x:Name="DonutCenterTitle" Text="Всего расходов" FontSize="11"
+                                                       FontFamily="Inter" TextColor="{DynamicResource TextSecondaryColor}"
+                                                       HorizontalTextAlignment="Center" />
+                                                <Label x:Name="DonutCenterValue" Text="0 Br" FontSize="19"
+                                                       FontFamily="InterBold" TextColor="{DynamicResource TextPrimary}"
+                                                       HorizontalTextAlignment="Center" />
+                                            </VerticalStackLayout>
+                                        </Grid>
+
+                                        <BoxView HeightRequest="1" Color="{DynamicResource HairlineColor}" Margin="0,0,0,14" />
+
+                                        <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                                            <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
+                                                <Label Text="Детализация категорий" FontFamily="InterSemiBold"
+                                                       FontSize="13.5" TextColor="{DynamicResource TextPrimary}" VerticalTextAlignment="Center" />
+                                                <Border BackgroundColor="{DynamicResource SubtleSurface}" StrokeThickness="0"
+                                                        StrokeShape="RoundRectangle 999" Padding="8,2">
+                                                    <Label x:Name="CatCountLabel" Text="0 кат." FontSize="11"
+                                                           FontFamily="Inter" TextColor="{DynamicResource TextSecondaryColor}" />
+                                                </Border>
+                                            </HorizontalStackLayout>
+
+                                            <Border x:Name="ManageCatsBtn" Grid.Column="1" BackgroundColor="#268B5CF6"
+                                                    Stroke="#4D8B5CF6" StrokeThickness="1"
+                                                    StrokeShape="RoundRectangle 999" Padding="10,4">
+                                                <HorizontalStackLayout Spacing="4">
+                                                    <controls:LucideIcon x:Name="ManageCatsIcon" Icon="sliders-horizontal" Size="12"
+                                                                         Tint="{DynamicResource AccentPurple}" />
+                                                    <Label x:Name="ManageCatsLabel" Text="Управлять" FontSize="11.5" FontFamily="InterMedium"
+                                                           TextColor="{DynamicResource AccentPurple}" VerticalTextAlignment="Center" />
+                                                </HorizontalStackLayout>
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnManageCategoriesFromAnalyticsTapped" />
+                                                </Border.GestureRecognizers>
+                                            </Border>
+                                        </Grid>
+
+                                        <VerticalStackLayout x:Name="CategoryBreakdownList" Spacing="0" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+
+                            <!-- Тепловая карта трат — на вкладке «Категории» -->
+                            <Border Style="{StaticResource Card}" Padding="16">
+                                <VerticalStackLayout Spacing="0">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                        <Border x:Name="HeatmapIconBox" Grid.Column="0" WidthRequest="32" HeightRequest="32"
+                                                StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#268B5CF6">
+                                            <controls:LucideIcon x:Name="HeatmapCalendarIcon" Icon="calendar" Size="16"
+                                                                 Tint="{DynamicResource AccentPurple}" />
+                                        </Border>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                            <Label Text="Тепловая карта трат" FontFamily="InterSemiBold" FontSize="14"
+                                                   TextColor="{DynamicResource TextPrimary}" />
+                                            <Label x:Name="HeatmapInfoLabel" Text="Траты по дням месяца" FontSize="11.5"
+                                                   FontFamily="Inter" TextColor="{DynamicResource TextSecondaryColor}" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+
+                                    <VerticalStackLayout x:Name="HeatmapBody" IsVisible="True" Spacing="6" Margin="0,14,0,0">
+                                        <BoxView HeightRequest="1" Color="{DynamicResource HairlineColor}" Margin="0,0,0,10" />
+                                        <Grid ColumnDefinitions="*,*,*,*,*,*,*" Margin="0,0,0,4">
+                                            <Label Grid.Column="0" Text="Пн" FontSize="10.5" FontFamily="Inter"
+                                                   TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                                            <Label Grid.Column="1" Text="Вт" FontSize="10.5" FontFamily="Inter"
+                                                   TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                                            <Label Grid.Column="2" Text="Ср" FontSize="10.5" FontFamily="Inter"
+                                                   TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                                            <Label Grid.Column="3" Text="Чт" FontSize="10.5" FontFamily="Inter"
+                                                   TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                                            <Label Grid.Column="4" Text="Пт" FontSize="10.5" FontFamily="Inter"
+                                                   TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                                            <Label Grid.Column="5" Text="Сб" FontSize="10.5" FontFamily="Inter"
+                                                   TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                                            <Label Grid.Column="6" Text="Вс" FontSize="10.5" FontFamily="Inter"
+                                                   TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                                        </Grid>
+                                        <Grid x:Name="HeatmapGrid" ColumnDefinitions="*,*,*,*,*,*,*" RowSpacing="5" ColumnSpacing="5" />
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <!-- Подвкладка «Динамика» -->
+                        <VerticalStackLayout x:Name="AnalyticsDynamicsSection" IsVisible="False" Spacing="14">
+                            <Border x:Name="AnalyticsHubCard" Style="{StaticResource Card}">
+                                <VerticalStackLayout Spacing="0">
+                                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="1">
+                                            <Label x:Name="HubChartSub" Text="Ежедневный объём операций • 01.11 — 30.11"
+                                                   FontSize="11.5" FontFamily="Inter" MaxLines="1"
+                                                   LineBreakMode="TailTruncation"
+                                                   TextColor="{DynamicResource TextSecondaryColor}" />
+                                            <Label x:Name="HubChartTitle" Text="Динамика по дням" FontFamily="InterBold"
+                                                   FontSize="16" TextColor="{DynamicResource TextPrimary}" />
+                                        </VerticalStackLayout>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="1" HorizontalOptions="End">
+                                            <Label Text="Итого за период" FontSize="11" FontFamily="Inter"
+                                                   TextColor="{DynamicResource TextSecondaryColor}"
+                                                   HorizontalTextAlignment="End" />
+                                            <Label x:Name="DynTotalLabel" Text="0 Br" FontFamily="InterBold"
+                                                   FontSize="16" TextColor="{DynamicResource AccentPurple}"
+                                                   HorizontalTextAlignment="End" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+
+                                    <!-- Все типы графиков сразу видны: сетка 3×2 без горизонтального скролла -->
+                                    <Grid x:Name="HubChartPillsGrid" ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto"
+                                          ColumnSpacing="6" RowSpacing="6" Margin="0,0,0,12" />
+
+                                    <Grid x:Name="HubChartHost" Margin="0,6,0,0">
+                                        <GraphicsView x:Name="HubChart" HeightRequest="180" MinimumHeightRequest="120"
+                                                      MaximumHeightRequest="210" VerticalOptions="Start" />
+                                        <VerticalStackLayout x:Name="HubChartCenter" IsVisible="False"
+                                                             HorizontalOptions="Center" VerticalOptions="Center"
+                                                             Spacing="1" InputTransparent="True">
+                                            <Label x:Name="HubChartCenterTitle" Text="Всего" FontSize="11"
+                                                   FontFamily="Inter" TextColor="{DynamicResource TextSecondaryColor}"
+                                                   HorizontalTextAlignment="Center" />
+                                            <Label x:Name="HubChartCenterValue" Text="0 Br" FontSize="19"
+                                                   FontFamily="InterBold" TextColor="{DynamicResource TextPrimary}"
+                                                   HorizontalTextAlignment="Center" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+
+                                    <Label x:Name="HubChartInsight" Text="—" FontSize="11.5" FontFamily="Inter"
+                                           TextColor="{DynamicResource TextSecondaryColor}"
+                                           LineBreakMode="WordWrap" Margin="0,10,0,0" />
+
+                                    <VerticalStackLayout x:Name="HubChartLegend" Spacing="0" Margin="0,10,0,0" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                                <Border Grid.Column="0" Style="{StaticResource Card}" Padding="14">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="Средний в день" FontSize="11" FontFamily="Inter"
+                                               TextColor="{DynamicResource TextSecondaryColor}" />
+                                        <Label x:Name="DynAvgLabel" Text="0 Br" FontFamily="InterBold" FontSize="16"
+                                               TextColor="{DynamicResource TextPrimary}" />
+                                        <Label Text="В пределах нормы" FontSize="11" FontFamily="Inter"
+                                               TextColor="{StaticResource SuccessGreen}" />
+                                    </VerticalStackLayout>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource Card}" Padding="14">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="Пиковый день" FontSize="11" FontFamily="Inter"
+                                               TextColor="{DynamicResource TextSecondaryColor}" />
+                                        <Label x:Name="DynPeakLabel" Text="—" FontFamily="InterBold" FontSize="16"
+                                               TextColor="{DynamicResource TextPrimary}" />
+                                        <Label x:Name="DynPeakHint" Text="Нет данных" FontSize="11" FontFamily="Inter"
+                                               TextColor="{DynamicResource AccentPurple}" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </Grid>
+
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- ===================== ВКЛАДКА 3: СЧЕТА И ДОЛГИ ===================== -->
+                    <VerticalStackLayout x:Name="TabAccounts" IsVisible="False" Spacing="14">
+
+                        <Grid ColumnDefinitions="*,Auto" Padding="4,0,4,2">
+                            <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="End">
+                                <Label Text="Распределение средств" Style="{StaticResource PageSub}" IsVisible="False" />
+                                <Label Text="Счета и долги" Style="{StaticResource PageTitle}" />
+                            </VerticalStackLayout>
+                            <controls:SegmentedControl Grid.Column="1" x:Name="PeriodSegAccounts" VerticalOptions="End" />
+                        </Grid>
+
+                        <Border x:Name="AccountsHeroCard" Style="{StaticResource Card}" Padding="0">
+                            <Grid IsClippedToBounds="True">
+                                <Ellipse x:Name="OrbAccountsHero" WidthRequest="176" HeightRequest="176"
+                                         HorizontalOptions="End" VerticalOptions="Start"
+                                         Margin="0,-64,-64,0" Fill="#268B5CF6" InputTransparent="True" />
+
+                                <VerticalStackLayout Padding="20" Spacing="0">
+                                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,16">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                            <Label Text="Доступные средства" FontSize="12.5" FontFamily="Inter"
+                                                   TextColor="{DynamicResource TextSecondaryColor}" />
+                                            <Label x:Name="AccTotalLabel" Text="0 Br" Style="{StaticResource HeroAmount}" />
+                                        </VerticalStackLayout>
+                                        <Border x:Name="AccAllBadge" Grid.Column="1" BackgroundColor="#268B5CF6"
+                                                Stroke="#4D8B5CF6" StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 999" Padding="12,4"
+                                                VerticalOptions="Start">
+                                            <Label x:Name="AccAllBadgeLabel" Text="Все счета" FontSize="12" FontFamily="InterMedium"
+                                                   TextColor="{DynamicResource AccentPurple}" />
+                                        </Border>
+                                    </Grid>
+
+                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,0,0,12">
+                                        <Border Grid.Column="0" Style="{StaticResource InnerBox}" Padding="14">
+                                            <VerticalStackLayout Spacing="4">
+                                                <Label Text="Доходы" FontSize="11.5" FontFamily="Inter"
+                                                       TextColor="{DynamicResource TextSecondaryColor}" />
+                                                <Label x:Name="AccIncomeLabel" Text="+0 Br" FontFamily="InterSemiBold"
+                                                       FontSize="15.5" TextColor="{StaticResource SuccessGreen}" />
+                                            </VerticalStackLayout>
+                                        </Border>
+                                        <Border Grid.Column="1" Style="{StaticResource InnerBox}" Padding="14">
+                                            <VerticalStackLayout Spacing="4">
+                                                <Label Text="Расходы" FontSize="11.5" FontFamily="Inter"
+                                                       TextColor="{DynamicResource TextSecondaryColor}" />
+                                                <Label x:Name="AccExpenseLabel" Text="–0 Br" FontFamily="InterSemiBold"
+                                                       FontSize="15.5" TextColor="{DynamicResource TextPrimary}" />
+                                            </VerticalStackLayout>
+                                        </Border>
+                                    </Grid>
+
+                                    <Label Text="Нажмите на кошелёк ниже, чтобы отфильтровать его операции на главной."
+                                           FontSize="11.5" FontFamily="Inter" IsVisible="False"
+                                           TextColor="{DynamicResource TextSecondaryColor}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource Card}">
+                            <VerticalStackLayout Spacing="0">
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,14">
+                                    <Label Grid.Column="0" Text="Счета" Style="{StaticResource CardHeading}"
+                                           VerticalTextAlignment="Center" />
+                                    <Border x:Name="TransferPillButton" Grid.Column="1" BackgroundColor="#268B5CF6"
+                                            Stroke="#4D8B5CF6" StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 999" Padding="12,6">
+                                        <Label x:Name="TransferPillLabel" Text="⇄ Перевод" FontSize="12" FontFamily="InterSemiBold"
+                                               TextColor="{DynamicResource AccentPurple}" />
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnOpenTransferSheetTapped" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                </Grid>
+                                <VerticalStackLayout x:Name="WalletsStack" Spacing="10" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Style="{StaticResource Card}">
+                            <VerticalStackLayout Spacing="0">
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="1" VerticalOptions="Center">
+                                        <Label Text="Долги и займы" Style="{StaticResource CardHeading}" />
+                                        <Label x:Name="DebtSummaryLabel" Text="Контроль возвратов" FontSize="11.5" IsVisible="False"
+                                               FontFamily="Inter" TextColor="{DynamicResource TextSecondaryColor}" />
+                                    </VerticalStackLayout>
+                                    <Border Grid.Column="1" BackgroundColor="#26F59E0B" Stroke="#40F59E0B" StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 12" Padding="12,6">
+                                        <Label Text="+ Записать" FontSize="12" FontFamily="InterSemiBold"
+                                               TextColor="{StaticResource WarningAmber}" />
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnOpenDebtSheetTapped" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                </Grid>
+
+                                <controls:SegmentedControl x:Name="DebtSeg" Margin="0,0,0,12" />
+                                <VerticalStackLayout x:Name="DebtListContainer" Spacing="10" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- ===================== ВКЛАДКА 4: НАСТРОЙКИ ===================== -->
+                    <VerticalStackLayout x:Name="TabSettings" IsVisible="False" Spacing="14">
+                        <VerticalStackLayout Padding="4,0,4,2" Spacing="2">
+                            <Label Text="Параметры приложения" Style="{StaticResource PageSub}" IsVisible="False" />
+                            <Label Text="Настройки" Style="{StaticResource PageTitle}" />
+                        </VerticalStackLayout>
+
+                        <!-- КАРТОЧКА 1: Оформление и подсветка (1 в 1 с HTML) -->
+                        <Border x:Name="AppearanceCard" Style="{StaticResource Card}" Padding="0">
+                            <Grid IsClippedToBounds="True">
+                                <Ellipse x:Name="OrbSettingsAppearance" WidthRequest="160" HeightRequest="160"
+                                         HorizontalOptions="End" VerticalOptions="Start"
+                                         Margin="0,-64,-64,0" Fill="#268B5CF6" InputTransparent="True" />
+
+                                <VerticalStackLayout Padding="20" Spacing="0">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,14">
+                                        <Border x:Name="AppearanceIconBox" Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                                StrokeThickness="1" Stroke="#4D8B5CF6" StrokeShape="RoundRectangle 16"
+                                                BackgroundColor="#268B5CF6" VerticalOptions="Center">
+                                            <controls:LucideIcon x:Name="AppearancePaletteIcon" Icon="palette" Size="20"
+                                                                 Tint="{DynamicResource AccentPurple}" />
+                                        </Border>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                            <Label Text="Оформление" FontFamily="InterSemiBold" FontSize="14.5"
+                                                   TextColor="{DynamicResource TextPrimary}" />
+                                            <Label Text="Тема и подсветка" FontSize="11.5" FontFamily="Inter"
+                                                   TextColor="{DynamicResource TextSecondaryColor}" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+
+                                    <!-- Переключатель Тёмная / Светлая тема -->
+                                    <Label Text="Тема" FontSize="11.5" FontFamily="Inter"
+                                           TextColor="{DynamicResource TextSecondaryColor}" Margin="0,0,0,6" />
+                                    <controls:SegmentedControl x:Name="ThemeModeSeg" Margin="0,0,0,14" />
+
+                                    <BoxView HeightRequest="1" Color="{DynamicResource HairlineColor}" Margin="0,0,0,10" />
+
+                                    <!-- Тумблер Неоновая подсветка (Glow) -->
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" Margin="0,0,0,10">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+                                            <Label Text="Подсветка" FontFamily="InterMedium" FontSize="13.5"
+                                                   TextColor="{DynamicResource TextPrimary}" />
+                                            <Label x:Name="GlowStatusSubLabel" Text="Включено"
+                                                   FontSize="11.5" FontFamily="Inter"
+                                                   TextColor="{DynamicResource TextSecondaryColor}" />
+                                        </VerticalStackLayout>
+                                        <Border x:Name="GlowSwitchTrack" Grid.Column="1" WidthRequest="46" HeightRequest="26"
+                                                StrokeThickness="1" StrokeShape="RoundRectangle 999"
+                                                BackgroundColor="{DynamicResource AccentPurple}"
+                                                Stroke="{DynamicResource AccentPurple}" Padding="2"
+                                                VerticalOptions="Center">
+                                            <Border x:Name="GlowSwitchThumb" WidthRequest="20" HeightRequest="20"
+                                                    StrokeThickness="0" StrokeShape="RoundRectangle 999"
+                                                    BackgroundColor="White" HorizontalOptions="Start"
+                                                    VerticalOptions="Center" TranslationX="20" />
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="OnToggleGlowTapped" />
+                                            </Border.GestureRecognizers>
+                                        </Border>
+                                    </Grid>
+
+                                    <BoxView HeightRequest="1" Color="{DynamicResource HairlineColor}" Margin="0,0,0,12" />
+
+                                    <!-- Палитра выбора цвета подсветки и акцента -->
+                                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                                        <Label Grid.Column="0" Text="Акцент" FontSize="11.5" FontFamily="Inter"
+                                               TextColor="{DynamicResource TextSecondaryColor}" />
+                                        <Label Grid.Column="1" x:Name="ActiveGlowColorNameLabel" Text="Фиолетовый"
+                                               FontSize="11.5" FontFamily="InterSemiBold"
+                                               TextColor="{DynamicResource AccentPurple}" />
+                                    </Grid>
+                                    <Grid x:Name="GlowColorPickerRow" ColumnDefinitions="*,*,*,*,*,*" Margin="0,0,0,14" />
+
+                                    <BoxView HeightRequest="1" Color="{DynamicResource HairlineColor}" Margin="0,0,0,12" />
+
+                                    <!-- Кастомный выбор оттенка по градиенту (Hue 0..360) -->
+                                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,6">
+                                        <Label Grid.Column="0" Text="Свой оттенок (Градиент)" FontSize="11.5" FontFamily="Inter"
+                                               TextColor="{DynamicResource TextSecondaryColor}" />
+                                        <Label Grid.Column="1" x:Name="CustomHexLabel" Text="#8B5CF6"
+                                               FontSize="11" FontFamily="InterSemiBold"
+                                               TextColor="{DynamicResource AccentPurple}" />
+                                    </Grid>
+                                    <Grid HeightRequest="28" Margin="0,0,0,12">
+                                        <Border HeightRequest="12" StrokeThickness="0" StrokeShape="RoundRectangle 999"
+                                                VerticalOptions="Center" InputTransparent="True">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                                    <GradientStop Color="#EF4444" Offset="0.00" />
+                                                    <GradientStop Color="#F59E0B" Offset="0.17" />
+                                                    <GradientStop Color="#22C55E" Offset="0.33" />
+                                                    <GradientStop Color="#06B6D4" Offset="0.50" />
+                                                    <GradientStop Color="#3B82F6" Offset="0.67" />
+                                                    <GradientStop Color="#8B5CF6" Offset="0.83" />
+                                                    <GradientStop Color="#EC4899" Offset="1.00" />
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+                                        <Slider x:Name="CustomHueSlider" Minimum="0" Maximum="360" Value="262"
+                                                MinimumTrackColor="Transparent" MaximumTrackColor="Transparent"
+                                                ThumbColor="White" ValueChanged="OnCustomHueSliderChanged" />
+                                    </Grid>
+
+                                    <!-- Ползунок прозрачности / силы подсветки (0% — 100%) -->
+                                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,6">
+                                        <Label Grid.Column="0" Text="Прозрачность / Сила подсветки" FontSize="11.5" FontFamily="Inter"
+                                               TextColor="{DynamicResource TextSecondaryColor}" />
+                                        <Label Grid.Column="1" x:Name="GlowOpacityLabel" Text="100%"
+                                               FontSize="11.5" FontFamily="InterSemiBold"
+                                               TextColor="{DynamicResource TextPrimary}" />
+                                    </Grid>
+                                    <Grid HeightRequest="28">
+                                        <Border HeightRequest="10" StrokeThickness="0" StrokeShape="RoundRectangle 999"
+                                                VerticalOptions="Center" InputTransparent="True">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                                    <GradientStop Color="#269E9E9E" Offset="0.0" />
+                                                    <GradientStop x:Name="OpacityGradientEndStop" Color="#8B5CF6" Offset="1.0" />
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+                                        <Slider x:Name="GlowOpacitySlider" Minimum="0" Maximum="100" Value="100"
+                                                MinimumTrackColor="Transparent" MaximumTrackColor="Transparent"
+                                                ThumbColor="White" ValueChanged="OnGlowOpacitySliderChanged" />
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+
+                        <!-- КАРТОЧКА 2: Категории и иконки -->
+                        <Border Style="{StaticResource Card}">
+                            <VerticalStackLayout Spacing="0">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14" Margin="0,0,0,14">
+                                    <Border x:Name="SettingsCatIconBox" Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                            StrokeThickness="1" Stroke="#4D8B5CF6" StrokeShape="RoundRectangle 16"
+                                            BackgroundColor="#268B5CF6" VerticalOptions="Start">
+                                        <controls:LucideIcon x:Name="SettingsCatIcon" Icon="layers" Size="20"
+                                                             Tint="{DynamicResource AccentPurple}" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3">
+                                        <Label Text="Категории" FontFamily="InterSemiBold" FontSize="14.5"
+                                               TextColor="{DynamicResource TextPrimary}" />
+                                        <Label x:Name="SettingsCatSub" Text="Названия, цвета, иконки."
+                                               FontSize="12" FontFamily="Inter"
+                                               TextColor="{DynamicResource TextSecondaryColor}" />
+                                    </VerticalStackLayout>
+                                </Grid>
+
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                    <Border Grid.Column="0" BackgroundColor="{DynamicResource SubtleSurface}"
+            Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+            StrokeShape="RoundRectangle 15" Padding="12,10">
+                                        <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                                            <Border WidthRequest="26" HeightRequest="26" StrokeThickness="0" 
+                    StrokeShape="RoundRectangle 999" BackgroundColor="#26EF4444" VerticalOptions="Center">
+                                                <controls:LucideIcon Icon="arrow-up-right" Size="14" Tint="{StaticResource DangerRed}" 
+                                     Stroke="2.5" HorizontalOptions="Center" VerticalOptions="Center" />
+                                            </Border>
+                                            <Label Text="Категории трат" FontSize="12.5" FontFamily="InterMedium"
+                   TextColor="{DynamicResource TextPrimary}" VerticalTextAlignment="Center" />
+                                        </HorizontalStackLayout>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnOpenExpenseCategoriesTapped" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+
+                                    <Border Grid.Column="1" BackgroundColor="{DynamicResource SubtleSurface}"
+            Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+            StrokeShape="RoundRectangle 15" Padding="12,10">
+                                        <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                                            <Border WidthRequest="26" HeightRequest="26" StrokeThickness="0" 
+                    StrokeShape="RoundRectangle 999" BackgroundColor="#2622C55E" VerticalOptions="Center">
+                                                <controls:LucideIcon Icon="arrow-down-left" Size="14" Tint="{StaticResource SuccessGreen}" 
+                                     Stroke="2.5" HorizontalOptions="Center" VerticalOptions="Center" />
+                                            </Border>
+                                            <Label Text="Категории дохода" FontSize="12.5" FontFamily="InterMedium"
+                   TextColor="{DynamicResource TextPrimary}" VerticalTextAlignment="Center" />
+                                        </HorizontalStackLayout>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnOpenIncomeCategoriesTapped" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- КАРТОЧКА 3: Автоматический учёт -->
+                        <Border Style="{StaticResource Card}">
+                            <VerticalStackLayout Spacing="0">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14" Margin="0,0,0,16">
+                                    <Border x:Name="AutoTrackBotBadge" Grid.Column="0" WidthRequest="40" HeightRequest="40"
+                                            StrokeShape="RoundRectangle 999" BackgroundColor="#338B5CF6" Stroke="Transparent">
+                                        <controls:LucideIcon x:Name="AutoTrackBotIcon" Icon="bot" Size="20"
+                                                             Tint="{DynamicResource AccentPurple}" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3">
+                                        <Label Text="Автоучёт" FontFamily="InterSemiBold" FontSize="14.5"
+                                               TextColor="{DynamicResource TextPrimary}" />
+                                        <Label Text="Samsung Wallet и СМС."
+                                               FontSize="12.5" FontFamily="Inter"
+                                               TextColor="{DynamicResource TextSecondaryColor}" />
+                                    </VerticalStackLayout>
+                                </Grid>
+
+                                <Border x:Name="AutoTrackButton" BackgroundColor="#1A22C55E" Stroke="#3322C55E" StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 16" Padding="12,12"
+                                        HorizontalOptions="Fill">
+                                    <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                                        <controls:LucideIcon x:Name="AutoTrackIcon" Icon="check-circle-2" Size="16"
+                                                             Tint="{StaticResource SuccessGreen}" />
+                                        <Label x:Name="AutoTrackLabel" Text="Автоучёт активен" FontFamily="InterMedium"
+                                               FontSize="13.5" TextColor="{StaticResource SuccessGreen}"
+                                               VerticalTextAlignment="Center" />
+                                    </HorizontalStackLayout>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnToggleAutoTrackTapped" />
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- КАРТОЧКА 4: Данные и Валюта -->
+                        <Border Style="{StaticResource Card}">
+                            <VerticalStackLayout Spacing="0">
+                                <Label Text="Данные" Style="{StaticResource CardHeading}" Margin="0,0,0,12" />
+
+                                <Label Text="Валюта" FontSize="12" FontFamily="Inter"
+                                       TextColor="{DynamicResource TextSecondaryColor}" Margin="0,0,0,6" />
+                                <controls:SegmentedControl x:Name="CurrencySeg" Margin="0,0,0,14" />
+
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,14">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+                                        <Label Text="Курсы" FontFamily="InterMedium" FontSize="13.5"
+                                               TextColor="{DynamicResource TextPrimary}" />
+                                        <Label x:Name="FxRateLabel" Text="1 $ = 3,25 Br • 1 € = 3,33 Br (Обновлено сегодня)" FontSize="12"
+                                               FontFamily="Inter" TextColor="{DynamicResource TextSecondaryColor}" />
+                                    </VerticalStackLayout>
+                                    <Border Grid.Column="1" BackgroundColor="{DynamicResource SubtleSurface}"
+                                            Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 999" WidthRequest="36" HeightRequest="36" Padding="0">
+                                        <controls:LucideIcon Icon="refresh-cw" Size="16" Tint="#9E9E9E" />
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnRefreshRatesTapped" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                </Grid>
+
+                                <BoxView HeightRequest="1" Color="{DynamicResource HairlineColor}" Margin="0,0,0,14" />
+
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,0,0,10">
+                                    <Border Grid.Column="0" BackgroundColor="{DynamicResource SubtleSurface}"
+                                            Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 15" Padding="12,12">
+                                        <HorizontalStackLayout Spacing="6" HorizontalOptions="Center">
+                                            <controls:LucideIcon x:Name="CsvExportIcon" Icon="file-down" Size="16"
+                                                                 Tint="{DynamicResource AccentPurple}" />
+                                            <Label Text="Экспорт CSV" FontSize="13" FontFamily="InterMedium"
+                                                   TextColor="{DynamicResource TextPrimary}" VerticalTextAlignment="Center" />
+                                        </HorizontalStackLayout>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnOpenCsvSheetTapped" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+
+                                    <Border Grid.Column="1" BackgroundColor="#1A22C55E" Stroke="#3322C55E" StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 15" Padding="12,12">
+                                        <HorizontalStackLayout Spacing="6" HorizontalOptions="Center">
+                                            <controls:LucideIcon Icon="sparkles" Size="16" Tint="{StaticResource SuccessGreen}" />
+                                            <Label Text="Демо-данные" FontSize="13" FontFamily="InterMedium"
+                                                   TextColor="{StaticResource SuccessGreen}" VerticalTextAlignment="Center" />
+                                        </HorizontalStackLayout>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnSeedDemoDataTapped" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                </Grid>
+
+                                <Border BackgroundColor="#1AEF4444" Stroke="#33EF4444" StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 15" Padding="12,12">
+                                    <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                                        <controls:LucideIcon Icon="trash-2" Size="16" Tint="{StaticResource DangerRed}" />
+                                        <Label Text="Очистить данные" FontSize="13" FontFamily="InterMedium"
+                                               TextColor="{StaticResource DangerRed}" VerticalTextAlignment="Center" />
+                                    </HorizontalStackLayout>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnClearDataTapped" />
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- КАРТОЧКА 5: О приложении -->
+                        <Border Style="{StaticResource Card}" Padding="18">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                                <Image Grid.Column="0" Source="fintrack_mark.png" WidthRequest="44" HeightRequest="44"
+                                       Aspect="AspectFit" VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="ФинТрек" FontFamily="InterSemiBold" FontSize="16"
+                                           TextColor="{DynamicResource TextPrimary}" />
+                                    <Label Text="Версия 1.0" FontFamily="Inter" FontSize="11.5"
+                                           TextColor="{DynamicResource TextSecondaryColor}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <!-- НИЖНЕЕ МЕНЮ -->
+            <Border Grid.Row="2" x:Name="NavBarBorder" BackgroundColor="{DynamicResource CardColor}"
+                    Stroke="{DynamicResource HairlineColor}" StrokeThickness="1" StrokeShape="Rectangle"
+                    Padding="8,0,8,0" HeightRequest="84" VerticalOptions="End">
+                <Grid ColumnDefinitions="*,*,*,*,*">
+                    <VerticalStackLayout Grid.Column="0" x:Name="NavMain" Spacing="4" VerticalOptions="Center"
+                                         HorizontalOptions="Center" Padding="0,8,0,14">
+                        <controls:LucideIcon x:Name="NavMainIcon" Icon="layout-grid" Size="21"
+                                             Tint="{DynamicResource AccentPurple}" HorizontalOptions="Center" />
+                        <Label x:Name="NavMainLabel" Text="Главная" FontSize="11" FontFamily="InterMedium"
+                               TextColor="{DynamicResource AccentPurple}" HorizontalTextAlignment="Center" />
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnNavMainTapped" />
+                        </VerticalStackLayout.GestureRecognizers>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="1" x:Name="NavAnalytics" Spacing="4" VerticalOptions="Center"
+                                         HorizontalOptions="Center" Padding="0,8,0,14">
+                        <controls:LucideIcon x:Name="NavAnalyticsIcon" Icon="pie-chart" Size="21" Tint="#9E9E9E"
+                                             HorizontalOptions="Center" />
+                        <Label x:Name="NavAnalyticsLabel" Text="Аналитика" FontSize="11" FontFamily="InterMedium"
+                               TextColor="#9E9E9E" HorizontalTextAlignment="Center" />
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnNavAnalyticsTapped" />
+                        </VerticalStackLayout.GestureRecognizers>
+                    </VerticalStackLayout>
+
+                    <Grid Grid.Column="2" />
+
+                    <VerticalStackLayout Grid.Column="3" x:Name="NavAccounts" Spacing="4" VerticalOptions="Center"
+                                         HorizontalOptions="Center" Padding="0,8,0,14">
+                        <controls:LucideIcon x:Name="NavAccountsIcon" Icon="credit-card" Size="21" Tint="#9E9E9E"
+                                             HorizontalOptions="Center" />
+                        <Label x:Name="NavAccountsLabel" Text="Счета" FontSize="11" FontFamily="InterMedium"
+                               TextColor="#9E9E9E" HorizontalTextAlignment="Center" />
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnNavAccountsTapped" />
+                        </VerticalStackLayout.GestureRecognizers>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Column="4" x:Name="NavSettings" Spacing="4" VerticalOptions="Center"
+                                         HorizontalOptions="Center" Padding="0,8,0,14">
+                        <controls:LucideIcon x:Name="NavSettingsIcon" Icon="settings" Size="21" Tint="#9E9E9E"
+                                             HorizontalOptions="Center" />
+                        <Label x:Name="NavSettingsLabel" Text="Настройки" FontSize="11" FontFamily="InterMedium"
+                               TextColor="#9E9E9E" HorizontalTextAlignment="Center" />
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnNavSettingsTapped" />
+                        </VerticalStackLayout.GestureRecognizers>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Центральная кнопка создания операции (FAB) -->
+        <Border x:Name="FabButton" WidthRequest="56" HeightRequest="56" StrokeThickness="0"
+                StrokeShape="RoundRectangle 999" BackgroundColor="{DynamicResource AccentPurple}"
+                HorizontalOptions="Center" VerticalOptions="End" Margin="0,0,0,44" ZIndex="20">
+            <Border.Shadow>
+                <Shadow x:Name="FabShadow" Brush="#8B5CF6" Offset="0,4" Radius="20" Opacity="0.45" />
+            </Border.Shadow>
+            <controls:LucideIcon Icon="plus" Size="24" Tint="White" Stroke="2.2" />
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnAddTransactionTapped" />
+            </Border.GestureRecognizers>
+        </Border>
+
+        <!-- ================= DYNAMIC ISLAND TOAST ================= -->
+        <Border x:Name="ToastBorder" ZIndex="50" IsVisible="False" HorizontalOptions="Center"
+                VerticalOptions="Start" Margin="0,14,0,0" BackgroundColor="{DynamicResource CardColor}"
+                Stroke="#738B5CF6" StrokeThickness="1" StrokeShape="RoundRectangle 999" Padding="11,9,16,9">
+            <Border.Shadow>
+                <Shadow Brush="#000000" Offset="0,14" Radius="30" Opacity="0.65" />
+            </Border.Shadow>
+            <HorizontalStackLayout Spacing="9">
+                <Border x:Name="ToastPulseBox" WidthRequest="22" HeightRequest="22" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 999" BackgroundColor="#338B5CF6">
+                    <controls:LucideIcon x:Name="ToastIcon" Icon="sparkles" Size="14" Tint="{DynamicResource AccentPurple}" />
+                </Border>
+                <Label x:Name="ToastLabel" Text="Операция выполнена" FontFamily="InterMedium" FontSize="12.5"
+                       TextColor="{DynamicResource TextPrimary}" VerticalTextAlignment="Center" />
+            </HorizontalStackLayout>
+        </Border>
+
+        <!-- ================= ШТОРКА 1: ОПЕРАЦИЯ ================= -->
+        <Grid x:Name="AddTxOverlay" IsVisible="False" ZIndex="30" BackgroundColor="#8C000000">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnCloseAddTxTapped" />
+            </Grid.GestureRecognizers>
+            <Border x:Name="AddTxSheet" Style="{StaticResource Sheet}" TranslationY="900" MaximumHeightRequest="800">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnSheetTapIgnore" />
+                </Border.GestureRecognizers>
+                <ScrollView VerticalScrollBarVisibility="Never" VerticalOptions="Start">
+                    <VerticalStackLayout Spacing="0">
+                        <Grid HeightRequest="20" Padding="0,6,0,4">
+                            <Border WidthRequest="38" HeightRequest="4.5" StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 999" BackgroundColor="#619E9E9E"
+                                    HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCloseAddTxTapped" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,14">
+                            <Label Grid.Column="0" x:Name="AddTxTitleLabel" Text="Новая операция"
+                                   FontFamily="InterSemiBold" FontSize="17" TextColor="{DynamicResource TextPrimary}"
+                                   VerticalTextAlignment="Center" />
+                            <Border Grid.Column="1" WidthRequest="32" HeightRequest="32"
+                                    BackgroundColor="{DynamicResource SubtleSurface}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 999">
+                                <controls:LucideIcon Icon="x" Size="16" Tint="#9E9E9E" />
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnCloseAddTxTapped" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="0,0,0,12">
+                            <controls:SegmentedControl Grid.Column="0" x:Name="AddTxTypeSeg" FontSize="12.5" />
+                            <controls:SegmentedControl Grid.Column="1" x:Name="AddTxAccountSeg" FontSize="12.5"
+                                                       ItemPadding="12,6" />
+                        </Grid>
+
+                        <Border Style="{StaticResource FieldBox}">
+                            <Entry x:Name="AddAmountEntry" Style="{StaticResource FieldEntry}" FontSize="16"
+                                   FontFamily="InterSemiBold" Keyboard="Numeric"
+                                   Placeholder="Сумма в Br (например, 45)" />
+                        </Border>
+
+                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="6" Margin="0,8,0,14">
+                            <Border Grid.Column="0" BackgroundColor="{DynamicResource SubtleSurface}"
+                                    Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 12" Padding="0,6">
+                                <Label Text="+10" FontSize="12" FontFamily="InterMedium"
+                                       TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnQuickAmount10Tapped" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                            <Border Grid.Column="1" BackgroundColor="{DynamicResource SubtleSurface}"
+                                    Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 12" Padding="0,6">
+                                <Label Text="+50" FontSize="12" FontFamily="InterMedium"
+                                       TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnQuickAmount50Tapped" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                            <Border Grid.Column="2" BackgroundColor="{DynamicResource SubtleSurface}"
+                                    Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 12" Padding="0,6">
+                                <Label Text="+100" FontSize="12" FontFamily="InterMedium"
+                                       TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnQuickAmount100Tapped" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                            <Border Grid.Column="3" BackgroundColor="{DynamicResource SubtleSurface}"
+                                    Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 12" Padding="0,6">
+                                <Label Text="+500" FontSize="12" FontFamily="InterMedium"
+                                       TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnQuickAmount500Tapped" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                            <Label Grid.Column="0" Text="Выберите категорию" FontSize="11.5" FontFamily="InterMedium"
+                                   TextColor="{DynamicResource TextSecondaryColor}" VerticalTextAlignment="Center" />
+                            <Border x:Name="ModalOpenCatMgrBtn" Grid.Column="1" BackgroundColor="#1A8B5CF6"
+                                    Stroke="#408B5CF6" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 999" Padding="10,3">
+                                <HorizontalStackLayout Spacing="4">
+                                    <controls:LucideIcon x:Name="ModalOpenCatMgrIcon" Icon="sliders-horizontal" Size="12"
+                                                         Tint="{DynamicResource AccentPurple}" />
+                                    <Label x:Name="ModalOpenCatMgrLabel" Text="Настроить / + Своя" FontSize="11.5"
+                                           FontFamily="InterMedium" TextColor="{DynamicResource AccentPurple}" />
+                                </HorizontalStackLayout>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnOpenCategoryManagerTapped" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                        </Grid>
+
+                        <VerticalStackLayout Margin="0,0,0,14">
+                            <Grid x:Name="ModalCatChipsGrid" ColumnDefinitions="*,*" RowSpacing="8" ColumnSpacing="8" />
+                        </VerticalStackLayout>
+
+                        <Border Style="{StaticResource FieldBox}" Padding="16,2">
+                            <Entry x:Name="AddNoteEntry" Style="{StaticResource FieldEntry}" FontSize="13.5"
+                                   Placeholder="Комментарий к операции (необязательно)" />
+                        </Border>
+
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Margin="0,16,0,0">
+                            <Border Grid.Column="0" x:Name="AddTxDeleteButton" IsVisible="False"
+                                    BackgroundColor="#26EF4444" Stroke="#4DEF4444" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 16" Padding="16,14">
+                                <controls:LucideIcon Icon="trash-2" Size="16" Tint="{StaticResource DangerRed}" />
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnDeleteTransactionTapped" />
+                                </Border.GestureRecognizers>
+                            </Border>
+
+                            <Border x:Name="AddTxSubmitButton" Grid.Column="1"
+                                    BackgroundColor="{DynamicResource AccentPurple}" StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 16" Padding="14,14" HorizontalOptions="Fill">
+                                <Label x:Name="AddTxSubmitLabel" Text="Сохранить операцию" FontFamily="InterSemiBold"
+                                       FontSize="14.5" TextColor="White" HorizontalTextAlignment="Center" />
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnSubmitTransactionTapped" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </ScrollView>
+            </Border>
+        </Grid>
+
+        <!-- ================= ШТОРКА 2: МЕНЕДЖЕР КАТЕГОРИЙ ================= -->
+        <Grid x:Name="CatMgrOverlay" IsVisible="False" ZIndex="35" BackgroundColor="#8C000000">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnCloseCategoryManagerTapped" />
+            </Grid.GestureRecognizers>
+            <Border x:Name="CatMgrSheet" Style="{StaticResource Sheet}" TranslationY="900" MaximumHeightRequest="820">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnSheetTapIgnore" />
+                </Border.GestureRecognizers>
+                <ScrollView VerticalScrollBarVisibility="Never" VerticalOptions="Start">
+                    <VerticalStackLayout Spacing="0">
+                        <Grid HeightRequest="20" Padding="0,6,0,4">
+                            <Border WidthRequest="38" HeightRequest="4.5" StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 999" BackgroundColor="#619E9E9E"
+                                    HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCloseCategoryManagerTapped" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,14">
+                            <VerticalStackLayout Grid.Column="0" Spacing="1" VerticalOptions="Center">
+                                <Label Text="Категории" FontFamily="InterSemiBold" FontSize="17"
+                                       TextColor="{DynamicResource TextPrimary}" />
+                                <Label Text="Нажмите для правки или «Изм.» для удаления" FontSize="11"
+                                       FontFamily="Inter" TextColor="{DynamicResource TextSecondaryColor}" />
+                            </VerticalStackLayout>
+                            <HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                <Border x:Name="JiggleToggleButton" BackgroundColor="{DynamicResource SubtleSurface}"
+                                        Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 999" Padding="12,6">
+                                    <Label x:Name="JiggleToggleLabel" Text="Изм." FontSize="12" FontFamily="InterSemiBold"
+                                           TextColor="{DynamicResource AccentPurple}" />
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnToggleJiggleTapped" />
+                                    </Border.GestureRecognizers>
+                                </Border>
+                                <Border WidthRequest="32" HeightRequest="32"
+                                        BackgroundColor="{DynamicResource SubtleSurface}"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 999">
+                                    <controls:LucideIcon Icon="x" Size="16" Tint="#9E9E9E" />
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnCloseCategoryManagerTapped" />
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </HorizontalStackLayout>
+                        </Grid>
+
+                        <controls:SegmentedControl x:Name="CatMgrTypeSeg" Margin="0,0,0,14" />
+
+                        <ScrollView MaximumHeightRequest="196" VerticalScrollBarVisibility="Never" Margin="0,0,0,16">
+                            <Grid x:Name="CatMgrGrid" ColumnDefinitions="*,*" RowSpacing="8" ColumnSpacing="8" Padding="2" />
+                        </ScrollView>
+
+                        <Border BackgroundColor="{DynamicResource EditorBoxBg}"
+                                Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 22" Padding="14">
+                            <VerticalStackLayout Spacing="0">
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                                    <Label Grid.Column="0" x:Name="CatEditorTitle" Text="Новая категория"
+                                           FontFamily="InterSemiBold" FontSize="13" TextColor="{DynamicResource TextPrimary}"
+                                           VerticalTextAlignment="Center" />
+                                    <Border Grid.Column="1" x:Name="CatCancelEditButton" IsVisible="False"
+                                            BackgroundColor="{DynamicResource SubtleSurface}" StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 999" Padding="10,3">
+                                        <Label Text="Сбросить выбор" FontSize="11" FontFamily="Inter"
+                                               TextColor="{DynamicResource TextSecondaryColor}" />
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnResetCategoryEditorTapped" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                </Grid>
+
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10" Margin="0,0,0,12">
+                                    <Border Grid.Column="0" x:Name="CatPreviewBox" WidthRequest="44" HeightRequest="44"
+                                            StrokeThickness="1" StrokeShape="RoundRectangle 14"
+                                            BackgroundColor="#1E1B36" Stroke="#2D2852">
+                                        <controls:LucideIcon x:Name="CatPreviewIcon" Icon="sparkles" Size="20"
+                                                             Tint="#C4B5FD" />
+                                    </Border>
+                                    <Border Grid.Column="1" Style="{StaticResource FieldBox}" Padding="12,2">
+                                        <Entry x:Name="CatNameEntry" Style="{StaticResource FieldEntry}" FontSize="13.5"
+                                               MaxLength="26" Placeholder="Название (напр. Подписки)" />
+                                    </Border>
+                                </Grid>
+
+                                <Label Text="Цветовая тема" FontSize="11" FontFamily="Inter"
+                                       TextColor="{DynamicResource TextSecondaryColor}" Margin="0,0,0,6" />
+                                <Grid x:Name="CatColorRow" ColumnDefinitions="*,*,*,*,*,*,*,*" Margin="0,0,0,12" />
+
+                                <Label Text="Иконка категории" FontSize="11" FontFamily="Inter"
+                                       TextColor="{DynamicResource TextSecondaryColor}" Margin="0,0,0,6" />
+                                <ScrollView MaximumHeightRequest="118" VerticalScrollBarVisibility="Never" Margin="0,0,0,14">
+                                    <Grid x:Name="CatIconGrid" ColumnDefinitions="*,*,*,*,*" RowSpacing="6" ColumnSpacing="6" Padding="2" />
+                                </ScrollView>
+
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                    <Border Grid.Column="0" x:Name="CatDeleteButton" IsVisible="False"
+                                            BackgroundColor="#26EF4444" Stroke="#4DEF4444" StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 12" Padding="14,10">
+                                        <controls:LucideIcon Icon="trash-2" Size="16" Tint="{StaticResource DangerRed}" />
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnDeleteEditingCategoryTapped" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                    <Border x:Name="CatSubmitButton" Grid.Column="1"
+                                            BackgroundColor="{DynamicResource AccentPurple}"
+                                            StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="12,10">
+                                        <Label x:Name="CatSubmitLabel" Text="+ Добавить категорию"
+                                               FontFamily="InterSemiBold" FontSize="13.5" TextColor="White"
+                                               HorizontalTextAlignment="Center" />
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnSaveCategoryTapped" />
+                                        </Border.GestureRecognizers>
+                                    </Border>
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </ScrollView>
+            </Border>
+        </Grid>
+
+        <!-- ================= ШТОРКА 3: ПЕРЕВОД ================= -->
+        <Grid x:Name="TransferOverlay" IsVisible="False" ZIndex="30" BackgroundColor="#8C000000">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnCloseTransferSheetTapped" />
+            </Grid.GestureRecognizers>
+            <Border x:Name="TransferSheet" Style="{StaticResource Sheet}" TranslationY="900">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnSheetTapIgnore" />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="0">
+                    <Grid HeightRequest="20" Padding="0,6,0,4">
+                        <Border WidthRequest="38" HeightRequest="4.5" StrokeThickness="0"
+                                StrokeShape="RoundRectangle 999" BackgroundColor="#619E9E9E"
+                                HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnCloseTransferSheetTapped" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,16">
+                        <Label Grid.Column="0" Text="Перевод между счетами" FontFamily="InterSemiBold"
+                               FontSize="17" TextColor="{DynamicResource TextPrimary}" VerticalTextAlignment="Center" />
+                        <Border Grid.Column="1" WidthRequest="32" HeightRequest="32"
+                                BackgroundColor="{DynamicResource SubtleSurface}"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 999">
+                            <controls:LucideIcon Icon="x" Size="16" Tint="#9E9E9E" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCloseTransferSheetTapped" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </Grid>
+
+                    <controls:SegmentedControl x:Name="TransferDirectionSeg" Margin="0,0,0,14" />
+
+                    <Border Style="{StaticResource FieldBox}" Margin="0,0,0,16">
+                        <Entry x:Name="TransferAmountEntry" Style="{StaticResource FieldEntry}"
+                               Keyboard="Numeric" Placeholder="Сумма перевода в Br (например, 200)" />
+                    </Border>
+
+                    <Border BackgroundColor="{DynamicResource AccentPurple}" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 16" Padding="14,14">
+                        <Label Text="Выполнить перевод" FontFamily="InterSemiBold" FontSize="14.5"
+                               TextColor="White" HorizontalTextAlignment="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnSubmitTransferTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- ================= ШТОРКА 4: ЛИМИТ ================= -->
+        <Grid x:Name="LimitOverlay" IsVisible="False" ZIndex="30" BackgroundColor="#8C000000">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnCloseLimitSheetTapped" />
+            </Grid.GestureRecognizers>
+            <Border x:Name="LimitSheet" Style="{StaticResource Sheet}" TranslationY="900">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnSheetTapIgnore" />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="0">
+                    <Grid HeightRequest="20" Padding="0,6,0,4">
+                        <Border WidthRequest="38" HeightRequest="4.5" StrokeThickness="0"
+                                StrokeShape="RoundRectangle 999" BackgroundColor="#619E9E9E"
+                                HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnCloseLimitSheetTapped" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,14">
+                        <Label Grid.Column="0" Text="Месячный лимит расходов" FontFamily="InterSemiBold"
+                               FontSize="17" TextColor="{DynamicResource TextPrimary}" VerticalTextAlignment="Center" />
+                        <Border Grid.Column="1" WidthRequest="32" HeightRequest="32"
+                                BackgroundColor="{DynamicResource SubtleSurface}"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 999">
+                            <controls:LucideIcon Icon="x" Size="16" Tint="#9E9E9E" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCloseLimitSheetTapped" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </Grid>
+
+                    <Border Style="{StaticResource FieldBox}">
+                        <Entry x:Name="LimitEntry" Style="{StaticResource FieldEntry}" FontSize="16"
+                               FontFamily="InterSemiBold" Keyboard="Numeric" Placeholder="Лимит в Br" />
+                    </Border>
+
+                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8" Margin="0,12,0,16">
+                        <Border Grid.Column="0" BackgroundColor="{DynamicResource SubtleSurface}"
+                                Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12" Padding="0,8">
+                            <Label Text="1 500" FontSize="12" FontFamily="Inter"
+                                   TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnLimitPreset1500Tapped" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                        <Border Grid.Column="1" BackgroundColor="{DynamicResource SubtleSurface}"
+                                Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12" Padding="0,8">
+                            <Label Text="2 000" FontSize="12" FontFamily="Inter"
+                                   TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnLimitPreset2000Tapped" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                        <Border Grid.Column="2" BackgroundColor="{DynamicResource SubtleSurface}"
+                                Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12" Padding="0,8">
+                            <Label Text="2 500" FontSize="12" FontFamily="Inter"
+                                   TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnLimitPreset2500Tapped" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                        <Border Grid.Column="3" BackgroundColor="{DynamicResource SubtleSurface}"
+                                Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12" Padding="0,8">
+                            <Label Text="3 000" FontSize="12" FontFamily="Inter"
+                                   TextColor="{DynamicResource TextSecondaryColor}" HorizontalTextAlignment="Center" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnLimitPreset3000Tapped" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </Grid>
+
+                    <Border BackgroundColor="{DynamicResource AccentPurple}" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 16" Padding="14,14">
+                        <Label Text="Сохранить лимит" FontFamily="InterSemiBold" FontSize="14.5"
+                               TextColor="White" HorizontalTextAlignment="Center" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnSaveLimitTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- ================= ШТОРКА 5: ДОЛГ ================= -->
+        <Grid x:Name="DebtOverlay" IsVisible="False" ZIndex="30" BackgroundColor="#8C000000">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnCloseDebtSheetTapped" />
+            </Grid.GestureRecognizers>
+            <Border x:Name="DebtSheet" Style="{StaticResource Sheet}" TranslationY="900" MaximumHeightRequest="720">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnSheetTapIgnore" />
+                </Border.GestureRecognizers>
+                <ScrollView VerticalScrollBarVisibility="Never" VerticalOptions="Start">
+                    <VerticalStackLayout Spacing="0">
+                        <Grid HeightRequest="20" Padding="0,6,0,4">
+                            <Border WidthRequest="38" HeightRequest="4.5" StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 999" BackgroundColor="#619E9E9E"
+                                    HorizontalOptions="Center" VerticalOptions="Center" />
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCloseDebtSheetTapped" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,14">
+                            <VerticalStackLayout Grid.Column="0" Spacing="1" VerticalOptions="Center">
+                                <Label Text="Записать долг или займ" FontFamily="InterSemiBold" FontSize="17"
+                                       TextColor="{DynamicResource TextPrimary}" />
+                                <Label x:Name="DebtHintLabel"
+                                       Text="Вы даёте в долг: сумма сразу спишется со счёта" FontSize="11"
+                                       FontFamily="Inter" TextColor="{DynamicResource TextSecondaryColor}" />
+                            </VerticalStackLayout>
+                            <Border Grid.Column="1" WidthRequest="32" HeightRequest="32"
+                                    BackgroundColor="{DynamicResource SubtleSurface}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 999" VerticalOptions="Center">
+                                <controls:LucideIcon Icon="x" Size="16" Tint="#9E9E9E" />
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnCloseDebtSheetTapped" />
+                                </Border.GestureRecognizers>
+                            </Border>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="0,0,0,12">
+                            <controls:SegmentedControl Grid.Column="0" x:Name="DebtTypeSeg" FontSize="12.5" />
+                            <controls:SegmentedControl Grid.Column="1" x:Name="DebtAccountSeg" FontSize="12.5"
+                                                       ItemPadding="12,6" />
+                        </Grid>
+
+                        <Border Style="{StaticResource FieldBox}" Margin="0,0,0,10">
+                            <Entry x:Name="DebtPersonEntry" Style="{StaticResource FieldEntry}" FontSize="14"
+                                   Placeholder="Имя (например, Алексей)" />
+                        </Border>
+                        <Border Style="{StaticResource FieldBox}" Margin="0,0,0,10">
+                            <Entry x:Name="DebtAmountEntry" Style="{StaticResource FieldEntry}" FontSize="14" Keyboard="Numeric"
+                                   Placeholder="Сумма в Br (например, 150)" />
+                        </Border>
+                        <Border Style="{StaticResource FieldBox}" Margin="0,0,0,16">
+                            <Entry x:Name="DebtDueEntry" Style="{StaticResource FieldEntry}" FontSize="14"
+                                   Placeholder="Срок возврата (например, до 25 нояб)" />
+                        </Border>
+
+                        <!-- Кнопка сохранения долга в янтарном цвете с тёмным текстом (как в HTML) -->
+                        <Border BackgroundColor="{StaticResource WarningAmber}" StrokeThickness="0"
+                                StrokeShape="RoundRectangle 16" Padding="14,14">
+                            <Label Text="Сохранить и обновить баланс" FontFamily="InterSemiBold" FontSize="14.5"
+                                   TextColor="#111111" HorizontalTextAlignment="Center" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnSubmitDebtTapped" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </VerticalStackLayout>
+                </ScrollView>
+            </Border>
+        </Grid>
+
+        <!-- ================= ШТОРКА 6: CSV ================= -->
+        <Grid x:Name="CsvOverlay" IsVisible="False" ZIndex="30" BackgroundColor="#8C000000">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnCloseCsvSheetTapped" />
+            </Grid.GestureRecognizers>
+            <Border x:Name="CsvSheet" Style="{StaticResource Sheet}" TranslationY="900">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnSheetTapIgnore" />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="0">
+                    <Grid HeightRequest="20" Padding="0,6,0,4">
+                        <Border WidthRequest="38" HeightRequest="4.5" StrokeThickness="0"
+                                StrokeShape="RoundRectangle 999" BackgroundColor="#619E9E9E"
+                                HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnCloseCsvSheetTapped" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,10">
+                        <Label Grid.Column="0" Text="Экспорт CSV в буфер" FontFamily="InterSemiBold"
+                               FontSize="17" TextColor="{DynamicResource TextPrimary}" VerticalTextAlignment="Center" />
+                        <Border Grid.Column="1" WidthRequest="32" HeightRequest="32"
+                                BackgroundColor="{DynamicResource SubtleSurface}"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 999">
+                            <controls:LucideIcon Icon="x" Size="16" Tint="#9E9E9E" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCloseCsvSheetTapped" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </Grid>
+
+                    <Label Text="Данные подготовлены прямо в окне предпросмотра:" FontSize="12"
+                           FontFamily="Inter" TextColor="{DynamicResource TextSecondaryColor}" Margin="0,0,0,10" />
+
+                    <Border BackgroundColor="{DynamicResource TrackColor}"
+                            Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 16" Padding="12" Margin="0,0,0,14">
+                        <ScrollView HeightRequest="140" Orientation="Both">
+                            <Label x:Name="CsvPreviewLabel" Text="" FontFamily="Inter" FontSize="11.5"
+                                   TextColor="{DynamicResource TextPrimary}" LineBreakMode="NoWrap" />
+                        </ScrollView>
+                    </Border>
+
+                    <Border BackgroundColor="{DynamicResource AccentPurple}" StrokeThickness="0"
+                            StrokeShape="RoundRectangle 16" Padding="14,14">
+                        <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <controls:LucideIcon Icon="copy" Size="16" Tint="White" />
+                            <Label Text="Скопировать CSV" FontFamily="InterSemiBold" FontSize="14"
+                                   TextColor="White" VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnCopyCsvTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- ================= ШТОРКА ПОДТВЕРЖДЕНИЯ (в стиле iOS) ================= -->
+        <Grid x:Name="ConfirmOverlay" IsVisible="False" ZIndex="60" BackgroundColor="#8C000000">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnConfirmCancelTapped" />
+            </Grid.GestureRecognizers>
+            <Border x:Name="ConfirmSheet" Style="{StaticResource Sheet}" TranslationY="900">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnSheetTapIgnore" />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="0">
+                    <Grid HeightRequest="20" Padding="0,6,0,4">
+                        <Border WidthRequest="38" HeightRequest="4.5" StrokeThickness="0"
+                                StrokeShape="RoundRectangle 999" BackgroundColor="#619E9E9E"
+                                HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Grid>
+
+                    <Label x:Name="ConfirmTitleLabel" Text="Подтвердите действие" FontFamily="InterSemiBold"
+                           FontSize="17" TextColor="{DynamicResource TextPrimary}" Margin="0,8,0,10" />
+
+                    <Label x:Name="ConfirmMessageLabel" Text="" FontFamily="Inter" FontSize="13"
+                           TextColor="{DynamicResource TextSecondaryColor}" Margin="0,0,0,18" />
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Border Grid.Column="0" BackgroundColor="{DynamicResource SubtleSurface}"
+                                Stroke="{DynamicResource HairlineColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 16" Padding="14,14">
+                            <Label Text="Отмена" FontFamily="InterSemiBold" FontSize="14.5"
+                                   TextColor="{DynamicResource TextPrimary}" HorizontalTextAlignment="Center" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnConfirmCancelTapped" />
+                            </Border.GestureRecognizers>
+                        </Border>
+
+                        <Border Grid.Column="1" BackgroundColor="{StaticResource DangerRed}" StrokeThickness="0"
+                                StrokeShape="RoundRectangle 16" Padding="14,14">
+                            <Label x:Name="ConfirmYesLabel" Text="Подтвердить" FontFamily="InterSemiBold"
+                                   FontSize="14.5" TextColor="White" HorizontalTextAlignment="Center" />
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnConfirmYesTapped" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </Grid>
+</ContentPage>

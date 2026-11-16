@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>ФинТрек — логотип</title>
+<style>
+  @font-face { font-family: "Inter"; src: url("../../Fonts/Inter-Regular.ttf"); font-weight: 400; }
+  @font-face { font-family: "Inter"; src: url("../../Fonts/Inter-Medium.ttf"); font-weight: 500; }
+  @font-face { font-family: "Inter"; src: url("../../Fonts/Inter-SemiBold.ttf"); font-weight: 600; }
+  @font-face { font-family: "Inter"; src: url("../../Fonts/Inter-Bold.ttf"); font-weight: 700; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, sans-serif; background: #0c0c0e; color: #fff; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 40px 80px; }
+  .eyebrow { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #8b8b98; margin: 0 0 14px; }
+  h1 { font-size: 30px; font-weight: 600; margin: 0 0 10px; letter-spacing: -.02em; }
+  .sub { color: #a8a8b4; font-size: 15px; margin: 0 0 38px; }
+  .card { border: 1px solid #26262e; border-radius: 24px; overflow: hidden; margin-bottom: 22px; }
+  .dark { background: #121214; }
+  .light { background: #f3f1f8; }
+  .pad { padding: 58px 56px; display: flex; align-items: center; justify-content: center; }
+  .pad img { max-width: 100%; }
+  .logo-dark, .logo-light { width: 620px; }
+  .label { display: flex; justify-content: space-between; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #7d7d8a; padding: 16px 22px 0; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .box { border: 1px solid #26262e; border-radius: 24px; padding: 30px; display: flex; flex-direction: column; align-items: center; gap: 22px; background: #121214; }
+  .box img.mark { width: 148px; }
+  .box .caption { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #7d7d8a; }
+  .sizes { display: flex; align-items: flex-end; gap: 30px; }
+  .sizes img { display: block; }
+  .s96 { width: 96px; } .s64 { width: 64px; } .s48 { width: 48px; } .s32 { width: 32px; } .s24 { width: 24px; } .s16 { width: 16px; }
+  .iconrow { display: flex; gap: 34px; align-items: center; flex-wrap: wrap; }
+  .iconrow img { width: 132px; border-radius: 26px; }
+  .note { color: #8b8b98; font-size: 14px; line-height: 1.65; margin-top: 8px; }
+  .note b { color: #d6d0ff; font-weight: 500; }
+  .headershow { display: flex; align-items: center; gap: 16px; background: #121214; padding: 26px 30px; border-radius: 22px; border: 1px solid #26262e; width: fit-content; }
+  .headershow img { width: 44px; }
+  .headershow span { font-size: 30px; font-weight: 600; letter-spacing: -.02em; }
+  .splashbox { background: #121212; padding: 60px; display: flex; justify-content: center; }
+  .splashbox img { width: 190px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">ФинТрек · айдентика</p>
+  <h1>Тёмный знак с золотой монетой и долларом</h1>
+  <p class="sub">Тёмная matte-подложка, золотая монета и знак доллара — деньги и бюджет без лишних деталей. Фиолетовый остался в словесном знаке и свечении приложения.</p>
+
+  <div class="card">
+    <div class="label"><span>Основной логотип</span><span>на тёмном</span></div>
+    <div class="pad dark"><img class="logo-dark" src="fintrack-logo-dark.svg" alt="ФинТрек"></div>
+  </div>
+
+  <div class="card">
+    <div class="label"><span>Основной логотип</span><span>на светлом</span></div>
+    <div class="pad light"><img class="logo-light" src="fintrack-logo-light.svg" alt="ФинТрек"></div>
+  </div>
+
+  <div class="grid">
+    <div class="box">
+      <img class="mark" src="fintrack-mark.svg" alt="Знак ФинТрек">
+      <span class="caption">Знак</span>
+    </div>
+    <div class="box">
+      <div class="headershow"><img src="fintrack-coin-badge.svg" alt=""><span>ФинТрек</span></div>
+      <span class="caption">В шапке приложения</span>
+    </div>
+    <div class="box">
+      <div class="sizes">
+        <img class="s96" src="fintrack-mark.svg" alt="">
+        <img class="s64" src="fintrack-mark.svg" alt="">
+        <img class="s48" src="fintrack-mark.svg" alt="">
+        <img class="s32" src="fintrack-mark.svg" alt="">
+        <img class="s24" src="fintrack-mark.svg" alt="">
+        <img class="s16" src="fintrack-mark.svg" alt="">
+      </div>
+      <span class="caption">Масштабирование</span>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:22px">
+    <div class="label"><span>Иконка приложения</span><span>dark / gold</span></div>
+    <div class="pad dark">
+      <div class="iconrow">
+        <img src="fintrack-icon.svg" alt="Иконка ФинТрек">
+        <img src="fintrack-icon.svg" alt="" style="width:76px">
+        <img src="fintrack-icon.svg" alt="" style="width:44px">
+        <img src="fintrack-icon.svg" alt="" style="width:28px">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label"><span>Заставка</span><span>dark #121212</span></div>
+    <div class="splashbox"><img src="fintrack-splash.svg" alt="Заставка ФинТрек"></div>
+  </div>
+
+  <p class="note">Палитра: тёмный <b>#121214</b> / <b>#17171B</b>, золото <b>#F6C453</b> / <b>#DFA22A</b>, акцент <b>#B9A3FF</b>.<br>
+  Золотая монета — деньги; знак доллара — валюта; тёмная подложка — характер приложения.</p>
+</div>
+</body>
+</html>

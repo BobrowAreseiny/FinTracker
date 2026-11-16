@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ФинТрек — варианты иконки</title>
+<style>
+  :root { --base:#0F0F11; --text:#fff; --muted:#9E9EA8; --violet:#8B5CF6; --gold:#F6C453; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#0B0B0D; color:var(--text); font-family:"Segoe UI",Inter,Roboto,Arial,sans-serif; }
+  .page { max-width:1120px; margin:0 auto; padding:52px 36px 80px; }
+  .eyebrow { font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:#7E7E8B; margin:0 0 12px; }
+  h1 { font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0 0 8px; }
+  .lead { color:#A6A6B2; font-size:15px; line-height:1.6; margin:0 0 34px; max-width:780px; }
+  .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; }
+  @media (max-width:800px){ .grid{grid-template-columns:1fr} .page{padding:36px 20px 60px} }
+  .option { background:#111114; border:1px solid #25252D; border-radius:24px; padding:18px; }
+  .head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px; }
+  .title { font-size:15px; font-weight:600; }
+  .tag { font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#7E7E8B; border:1px solid #2D2D36; border-radius:999px; padding:5px 9px; }
+  .tag.rec { color:#D6C7FF; border-color:rgba(139,92,246,.4); background:rgba(139,92,246,.10); }
+  .stage { background:radial-gradient(circle at 50% 0%, #24202f 0%, #0b0b0d 60%); border:1px solid #222229; border-radius:18px; padding:26px; display:flex; align-items:center; justify-content:center; gap:26px; min-height:250px; }
+  .big { width:160px; height:160px; border-radius:38px; box-shadow:0 18px 40px rgba(0,0,0,.5); }
+  .small { width:48px; height:48px; border-radius:12px; }
+  .caps { margin-top:12px; display:flex; align-items:center; gap:16px; }
+  .caps img, .caps svg { display:block; }
+  .desc { color:#8E8E9B; font-size:12.5px; line-height:1.5; margin:12px 2px 0; min-height:38px; }
+  .footer { margin-top:28px; border:1px solid #25252D; background:#111114; border-radius:18px; padding:18px 20px; color:#8E8E9B; font-size:12.5px; line-height:1.6; }
+  .footer b { color:#D8D8E0; }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="eyebrow">ФинТрек · иконка</p>
+  <h1>Варианты иконки приложения</h1>
+  <p class="lead">Все варианты — под тёмную тему и текущий фиолетовый акцент. Ниже крупный вид и размер на домашнем экране. Скажи номер — установлю выбранную.</p>
+
+  <div class="grid">
+
+    <!-- 0 current -->
+    <article class="option">
+      <div class="head"><div class="title">0. Текущая</div><span class="tag">сейчас</span></div>
+      <div class="stage">
+        <svg class="big" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="160" rx="38" fill="#121214"/>
+          <circle cx="80" cy="80" r="46" fill="#F6C453"/>
+          <circle cx="80" cy="80" r="36" fill="none" stroke="#DFA22A" stroke-width="3"/>
+          <text x="80" y="105" text-anchor="middle" font-family="Inter,Segoe UI,sans-serif" font-weight="800" font-size="64" fill="#121214">$</text>
+        </svg>
+        <svg class="small" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="160" rx="38" fill="#121214"/>
+          <circle cx="80" cy="80" r="46" fill="#F6C453"/>
+          <circle cx="80" cy="80" r="36" fill="none" stroke="#DFA22A" stroke-width="3"/>
+          <text x="80" y="105" text-anchor="middle" font-family="Inter,Segoe UI,sans-serif" font-weight="800" font-size="64" fill="#121214">$</text>
+        </svg>
+      </div>
+      <p class="desc">Золотая монета с долларом на почти чёрном фоне. Спокойно, но без привязки к акценту.</p>
+    </article>
+
+    <!-- 1 black glass + gold + violet rim -->
+    <article class="option">
+      <div class="head"><div class="title">1. Black Glass · золото</div><span class="tag rec">рекомендую</span></div>
+      <div class="stage">
+        <svg class="big" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="160" rx="38" fill="#0F0F11"/>
+          <rect x="1" y="1" width="158" height="158" rx="37" fill="none" stroke="#FFFFFF" stroke-opacity="0.10"/>
+          <circle cx="80" cy="80" r="54" fill="none" stroke="#8B5CF6" stroke-opacity="0.55" stroke-width="2"/>
+          <circle cx="80" cy="80" r="46" fill="#F6C453"/>
+          <circle cx="80" cy="80" r="36" fill="none" stroke="#DFA22A" stroke-width="3"/>
+          <text x="80" y="105" text-anchor="middle" font-family="Inter,Segoe UI,sans-serif" font-weight="800" font-size="64" fill="#0F0F11">$</text>
+        </svg>
+        <svg class="small" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="160" rx="38" fill="#0F0F11"/>
+          <circle cx="80" cy="80" r="54" fill="none" stroke="#8B5CF6" stroke-opacity="0.55" stroke-width="3"/>
+          <circle cx="80" cy="80" r="46" fill="#F6C453"/>
+          <circle cx="80" cy="80" r="36" fill="none" stroke="#DFA22A" stroke-width="3"/>
+          <text x="80" y="105" text-anchor="middle" font-family="Inter,Segoe UI,sans-serif" font-weight="800" font-size="64" fill="#0F0F11">$</text>
+        </svg>
+      </div>
+      <p class="desc">Чёрное стекло, золотая монета и тонкий фиолетовый кант. Связывает иконку с акцентом приложения.</p>
+    </article>
+
+    <!-- 2 gold $ minimal -->
+    <article class="option">
+      <div class="head"><div class="title">2. Минимальный $</div><span class="tag">графично</span></div>
+      <div class="stage">
+        <svg class="big" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="160" rx="38" fill="#0F0F11"/>
+          <rect x="1" y="1" width="158" height="158" rx="37" fill="none" stroke="#FFFFFF" stroke-opacity="0.08"/>
+          <circle cx="80" cy="80" r="58" fill="none" stroke="#8B5CF6" stroke-opacity="0.22" stroke-width="2"/>
+          <text x="80" y="108" text-anchor="middle" font-family="Inter,Segoe UI,sans-serif" font-weight="800" font-size="86" fill="#F6C453">$</text>
+        </svg>
+        <svg class="small" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="160" rx="38" fill="#0F0F11"/>
+          <text x="80" y="108" text-anchor="middle" font-family="Inter,Segoe UI,sans-serif" font-weight="800" font-size="86" fill="#F6C453">$</text>
+        </svg>
+      </div>
+      <p class="desc">Только крупный золотой знак доллара на чёрном. Самый лаконичный и заметный на маленьком размере.</p>
+    </article>
+
+    <!-- 3 violet tile -->
+    <article class="option">
+      <div class="head"><div class="title">3. Фиолетовая плитка</div><span class="tag">акцент</span></div>
+      <div class="stage">
+        <svg class="big" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="v" x1="20" y1="10" x2="145" y2="155" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#A78BFA"/><stop offset=".55" stop-color="#7C5CF6"/><stop offset="1" stop-color="#5B21B6"/>
+          </linearGradient></defs>
+          <rect width="160" height="160" rx="38" fill="url(#v)"/>
+          <rect x="1" y="1" width="158" height="158" rx="37" fill="none" stroke="#FFFFFF" stroke-opacity="0.16"/>
+          <text x="80" y="108" text-anchor="middle" font-family="Inter,Segoe UI,sans-serif" font-weight="800" font-size="80" fill="#FFFFFF">$</text>
+        </svg>
+        <svg class="small" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="v2" x1="20" y1="10" x2="145" y2="155" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#A78BFA"/><stop offset=".55" stop-color="#7C5CF6"/><stop offset="1" stop-color="#5B21B6"/>
+          </linearGradient></defs>
+          <rect width="160" height="160" rx="38" fill="url(#v2)"/>
+          <text x="80" y="108" text-anchor="middle" font-family="Inter,Segoe UI,sans-serif" font-weight="800" font-size="80" fill="#FFFFFF">$</text>
+        </svg>
+      </div>
+      <p class="desc">Классическая фиолетовая иконка с белым знаком. Максимально заметна на светлом и тёмном рабочем столе.</p>
+    </article>
+
+    <!-- 4 coin + arrow -->
+    <article class="option">
+      <div class="head"><div class="title">4. Монета и рост</div><span class="tag">смысл</span></div>
+      <div class="stage">
+        <svg class="big" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="160" rx="38" fill="#0F0F11"/>
+          <rect x="1" y="1" width="158" height="158" rx="37" fill="none" stroke="#FFFFFF" stroke-opacity="0.10"/>
+          <circle cx="80" cy="98" r="38" fill="#F6C453"/>
+          <circle cx="80" cy="98" r="29" fill="none" stroke="#DFA22A" stroke-width="3"/>
+          <path d="M80 78V38" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round"/>
+          <path d="M59 58 L80 37 L101 58" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg class="small" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="160" rx="38" fill="#0F0F11"/>
+          <circle cx="80" cy="98" r="38" fill="#F6C453"/>
+          <circle cx="80" cy="98" r="29" fill="none" stroke="#DFA22A" stroke-width="3"/>
+          <path d="M80 78V38" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round"/>
+          <path d="M59 58 L80 37 L101 58" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <p class="desc">Монета и стрелка вверх: деньги и рост. Без знака валюты, но с более сильным смыслом.</p>
+    </article>
+
+  </div>
+
+  <div class="footer">
+    <b>Мой выбор:</b> №1 — чёрное стекло, золото и фиолетовый кант. Он ближе всего к текущему интерфейсу.
+    Скажи номер — обновлю иконку приложения и заставку.
+  </div>
+</div>
+</body>
+</html>

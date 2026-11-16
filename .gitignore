@@ -1,0 +1,40 @@
+# Build outputs
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+launchSettings.json
+
+# Repository backups and local artifacts
+/backups/
+/.vs/
+
+# Root-level logs and captures
+/*.log
+/*.log.err
+/*.err
+/*.png
+/*.jpg
+/*.jpeg
+/*.apk
+/*.idsig
+/*.xml
+/*.txt
+/*.ps1
+
+# Project-level logs and test captures
+/FinTracker/*.log
+/FinTracker/*.log.err
+/FinTracker/*.err
+/FinTracker/ft_*.png
+/FinTracker/ft_*.xml
+/FinTracker/*.apk
+/FinTracker/*.idsig
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local asset backups
+*.bak

@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ФинТрек — варианты подсветки</title>
+<style>
+  :root {
+    --accent: #EC4899;
+    --accent-2: #8B5CF6;
+    --base: #121212;
+    --card: #1E1E20;
+    --text: #FFFFFF;
+    --muted: #9E9E9E;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #0B0B0D;
+    color: var(--text);
+    font-family: "Segoe UI", "Inter", Roboto, Arial, sans-serif;
+  }
+  .page { max-width: 1180px; margin: 0 auto; padding: 52px 36px 80px; }
+  .eyebrow { font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: #7E7E8B; margin: 0 0 12px; }
+  h1 { font-size: 30px; font-weight: 600; letter-spacing: -.03em; margin: 0 0 8px; }
+  .lead { color: #A6A6B2; font-size: 15px; line-height: 1.6; margin: 0 0 8px; max-width: 760px; }
+  .accent-note { color: #7E7E8B; font-size: 12.5px; margin: 0 0 34px; }
+  .accent-note b { color: var(--accent); font-weight: 600; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } .page { padding: 36px 20px 60px; } }
+
+  .option { background: #111114; border: 1px solid #25252D; border-radius: 24px; padding: 18px 18px 20px; }
+  .option-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .option-title { font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+  .option-desc { color: #8E8E9B; font-size: 12.5px; line-height: 1.5; margin: 12px 2px 0; min-height: 38px; }
+  .tag { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #7E7E8B; border: 1px solid #2D2D36; border-radius: 999px; padding: 5px 9px; white-space: nowrap; }
+  .tag.rec { color: #F9A8D4; border-color: rgba(236,72,153,.35); background: rgba(236,72,153,.08); }
+
+  .stage { background: #0E0E10; border: 1px solid #222229; border-radius: 18px; padding: 22px; overflow: hidden; }
+  .mock { width: min(100%, 340px); margin: 0 auto; }
+  .hero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 22px;
+    padding: 17px 17px 0;
+    background: linear-gradient(160deg, #232327 0%, #18181B 100%);
+    color: var(--text);
+  }
+  .hero > * { position: relative; z-index: 2; }
+  .hero-top { display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; color: #B7B7C2; }
+  .delta { color: #34D399; background: rgba(52,211,153,.10); border: 1px solid rgba(52,211,153,.18); border-radius: 999px; padding: 3px 8px; font-size: 10.5px; }
+  .amount { font-size: 29px; font-weight: 650; letter-spacing: -.035em; margin: 8px 0 12px; }
+  .chips { display: flex; gap: 6px; overflow: hidden; }
+  .chip { font-size: 10.5px; color: #B7B7C2; border: 1px solid rgba(255,255,255,.08); border-radius: 999px; padding: 4px 9px; white-space: nowrap; background: rgba(255,255,255,.035); }
+  .chip.active { color: #F9A8D4; border-color: rgba(236,72,153,.35); background: rgba(236,72,153,.12); }
+  .spark { display: block; width: 100%; height: 68px; margin-top: 7px; color: var(--accent); }
+  .spark path.line { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+  .spark path.fill { fill: rgba(236,72,153,.12); stroke: none; }
+  .mini { margin-top: 10px; border: 1px solid rgba(255,255,255,.06); background: linear-gradient(160deg, #202024, #19191C); border-radius: 18px; padding: 12px 14px; }
+  .mini .row { display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: #B7B7C2; }
+  .mini .muted { color: #8E8E9B; }
+  .bar { height: 7px; border-radius: 999px; background: rgba(255,255,255,.07); margin: 9px 0 7px; overflow: hidden; }
+  .bar span { display: block; width: 60%; height: 100%; border-radius: inherit; background: var(--accent); }
+  .mini .tiny { font-size: 9.5px; color: #7E7E8B; }
+
+  /* 0 — как сейчас */
+  .v-current .hero { box-shadow: 0 0 34px rgba(236,72,153,.26); border-color: rgba(236,72,153,.30); }
+  .v-current .hero::before,
+  .v-current .hero::after { content: ""; position: absolute; border-radius: 50%; z-index: 0; }
+  .v-current .hero::before { width: 230px; height: 230px; right: -78px; top: -92px; background: rgba(236,72,153,.20); }
+  .v-current .hero::after { width: 150px; height: 150px; left: -64px; bottom: -88px; background: rgba(139,92,246,.18); }
+
+  /* A — мягкий bloom */
+  .v-soft .hero { box-shadow: 0 0 32px rgba(236,72,153,.18); border-color: rgba(236,72,153,.24); }
+  .v-soft .hero::before {
+    content: ""; position: absolute; inset: -70px -60px auto -60px; height: 260px; z-index: 0;
+    background: radial-gradient(circle at 72% 32%, rgba(236,72,153,.28) 0%, rgba(236,72,153,.12) 34%, transparent 68%);
+    filter: blur(10px);
+  }
+  .v-soft .hero::after {
+    content: ""; position: absolute; width: 220px; height: 220px; left: -80px; bottom: -120px; z-index: 0;
+    background: radial-gradient(circle, rgba(139,92,246,.22) 0%, transparent 66%);
+    filter: blur(14px);
+  }
+
+  /* B — aurora */
+  .v-aurora .hero { border-color: rgba(255,255,255,.09); box-shadow: 0 16px 40px rgba(0,0,0,.30); }
+  .v-aurora .hero::before {
+    content: ""; position: absolute; inset: -40% -20%; z-index: 0;
+    background:
+      radial-gradient(ellipse at 82% 18%, rgba(236,72,153,.22) 0%, transparent 42%),
+      radial-gradient(ellipse at 15% 88%, rgba(139,92,246,.22) 0%, transparent 46%),
+      radial-gradient(ellipse at 64% 92%, rgba(20,184,166,.12) 0%, transparent 38%);
+    filter: blur(18px);
+  }
+  .v-aurora .hero::after {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(120deg, rgba(255,255,255,.045), transparent 38%);
+  }
+
+  /* C — neon rim */
+  .v-rim .hero {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(160deg, #232327 0%, #18181B 100%) padding-box,
+      linear-gradient(128deg, rgba(236,72,153,.85) 0%, rgba(139,92,246,.30) 38%, rgba(255,255,255,.07) 68%, rgba(255,255,255,.03) 100%) border-box;
+    box-shadow: 0 0 28px rgba(236,72,153,.15), 0 14px 30px rgba(0,0,0,.28);
+  }
+  .v-rim .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse at 8% 0%, rgba(236,72,153,.13) 0%, transparent 52%);
+  }
+  .v-rim .spark path.fill { fill: rgba(236,72,153,.07); }
+
+  /* D — glass sheen */
+  .v-sheen .hero { border-color: rgba(255,255,255,.08); box-shadow: 0 16px 34px rgba(0,0,0,.30); }
+  .v-sheen .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background:
+      linear-gradient(115deg, rgba(255,255,255,.075) 0%, rgba(255,255,255,.02) 26%, transparent 46%),
+      radial-gradient(circle at 78% 18%, rgba(236,72,153,.08) 0%, transparent 56%);
+  }
+  .v-sheen .hero::after {
+    content: ""; position: absolute; left: -20%; top: -60%; width: 70%; height: 200%; z-index: 1;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.035), transparent);
+    transform: rotate(24deg);
+  }
+
+  /* E — corner light */
+  .v-corner .hero { border-color: rgba(236,72,153,.20); box-shadow: 0 0 20px rgba(236,72,153,.10), 0 14px 30px rgba(0,0,0,.28); }
+  .v-corner .hero::before {
+    content: ""; position: absolute; width: 190px; height: 190px; right: -48px; top: -66px; z-index: 0;
+    background: radial-gradient(circle, rgba(236,72,153,.22) 0%, rgba(236,72,153,.07) 34%, transparent 68%);
+    filter: blur(8px);
+  }
+  .v-corner .chip.active { box-shadow: 0 0 16px rgba(236,72,153,.28); }
+  .v-corner .spark path.fill { fill: rgba(236,72,153,.06); }
+
+  .footer-note {
+    margin-top: 28px; border: 1px solid #25252D; background: #111114; border-radius: 18px;
+    padding: 18px 20px; color: #8E8E9B; font-size: 12.5px; line-height: 1.6;
+  }
+  .footer-note b { color: #D8D8E0; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="eyebrow">ФинТрек · оформление</p>
+  <h1>Варианты подсветки и цветовых пятен</h1>
+  <p class="lead">Сейчас в карточках лежат плотные круги с резкой границей и сильное свечение. Ниже — пять направлений, где пятна и glow остаются, но выглядят спокойнее. Выбери номер — внедрю его в приложение.</p>
+  <p class="accent-note">Превью в текущем акценте <b>розовый</b>. Цвет будет автоматически подстраиваться под любой выбранный акцент.</p>
+
+  <div class="grid">
+
+    <!-- 0 -->
+    <div class="option v-current">
+      <div class="option-head">
+        <div class="option-title">0. Как сейчас</div>
+        <span class="tag">для сравнения</span>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="hero">
+            <div class="hero-top"><span>Общий баланс</span><span class="delta">▲ +2 316 Br</span></div>
+            <div class="amount">2 316 Br</div>
+            <div class="chips"><span class="chip active">Все счета</span><span class="chip">Основной</span><span class="chip">Наличные</span></div>
+            <svg class="spark" viewBox="0 0 260 62" preserveAspectRatio="none">
+              <path class="fill" d="M0 54 C 24 52 44 49 66 40 S 104 24 132 29 S 188 18 214 12 S 246 6 260 7 L260 62 L0 62 Z"/>
+              <path class="line" d="M0 54 C 24 52 44 49 66 40 S 104 24 132 29 S 188 18 214 12 S 246 6 260 7"/>
+            </svg>
+          </div>
+          <div class="mini">
+            <div class="row"><span>Лимит на месяц</span><span class="muted">Осталось 796 Br</span></div>
+            <div class="bar"><span></span></div>
+            <div class="row tiny"><span>Потрачено 1 204 Br из 2 000 Br</span><span>44 Br/дн</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="option-desc">Плотные цветные круги с видимым краем и мощный внешний glow. Именно это сейчас создаёт «пятна».</div>
+    </div>
+
+    <!-- A -->
+    <div class="option v-soft">
+      <div class="option-head">
+        <div class="option-title">A. Мягкий bloom</div>
+        <span class="tag rec">рекомендую</span>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="hero">
+            <div class="hero-top"><span>Общий баланс</span><span class="delta">▲ +2 316 Br</span></div>
+            <div class="amount">2 316 Br</div>
+            <div class="chips"><span class="chip active">Все счета</span><span class="chip">Основной</span><span class="chip">Наличные</span></div>
+            <svg class="spark" viewBox="0 0 260 62" preserveAspectRatio="none">
+              <path class="fill" d="M0 54 C 24 52 44 49 66 40 S 104 24 132 29 S 188 18 214 12 S 246 6 260 7 L260 62 L0 62 Z"/>
+              <path class="line" d="M0 54 C 24 52 44 49 66 40 S 104 24 132 29 S 188 18 214 12 S 246 6 260 7"/>
+            </svg>
+          </div>
+          <div class="mini">
+            <div class="row"><span>Лимит на месяц</span><span class="muted">Осталось 796 Br</span></div>
+            <div class="bar"><span></span></div>
+            <div class="row tiny"><span>Потрачено 1 204 Br из 2 000 Br</span><span>44 Br/дн</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="option-desc">Те же пятна, но с растворённым краем: radial-gradient + лёгкий blur, меньше интенсивность glow. Минимальное изменение, максимум спокойствия.</div>
+    </div>
+
+    <!-- B -->
+    <div class="option v-aurora">
+      <div class="option-head">
+        <div class="option-title">B. Aurora</div>
+        <span class="tag">выразительно</span>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="hero">
+            <div class="hero-top"><span>Общий баланс</span><span class="delta">▲ +2 316 Br</span></div>
+            <div class="amount">2 316 Br</div>
+            <div class="chips"><span class="chip active">Все счета</span><span class="chip">Основной</span><span class="chip">Наличные</span></div>
+            <svg class="spark" viewBox="0 0 260 62" preserveAspectRatio="none">
+              <path class="fill" d="M0 54 C 24 52 44 49 66 40 S 104 24 132 29 S 188 18 214 12 S 246 6 260 7 L260 62 L0 62 Z"/>
+              <path class="line" d="M0 54 C 24 52 44 49 66 40 S 104 24 132 29 S 188 18 214 12 S 246 6 260 7"/>
+            </svg>
+          </div>
+          <div class="mini">
+            <div class="row"><span>Лимит на месяц</span><span class="muted">Осталось 796 Br</span></div>
+            <div class="bar"><span></span></div>
+            <div class="row tiny"><span>Потрачено 1 204 Br из 2 000 Br</span><span>44 Br/дн</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="option-desc">Два-три очень мягких цветовых облака по углам (акцент + фиолетовый + бирюзовый). Больше глубины, эффект «северного сияния».</div>
+    </div>
+
+    <!-- C -->
+    <div class="option v-rim">
+      <div class="option-head">
+        <div class="option-title">C. Neon rim</div>
+        <span class="tag">чисто</span>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="hero">
+            <div class="hero-top"><span>Общий баланс</span><span class="delta">▲ +2 316 Br</span></div>
+            <div class="amount">2 316 Br</div>
+            <div class="chips"><span class="chip active">Все счета</span><span class="chip">Основной</span><span class="chip">Наличные</span></div>
+            <svg class="spark" viewBox="0 0 260 62" preserveAspectRatio="none">
+              <path class="fill" d="M0 54 C 24 52 44 49 66 40 S 104 24 132 29 S 188 18 214 12 S 246 6 260 7 L260 62 L0 62 Z"/>
+              <path class="line" d="M0 54 C 24 52 44 49 66 40 S 104 24 132 29 S 188 18 214 12 S 246 6 260 7"/>
+            </svg>
+          </div>
+          <div class="mini">
+            <div class="row"><span>Лимит на месяц</span><span class="muted">Осталось 796 Br</span></div>
+            <div class="bar"><span></span></div>
+            <div class="row tiny"><span>Потрачено 1 204 Br из 2 000 Br</span><span>44 Br/дн</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="option-desc">Без цветных пятен: светящаяся градиентная рамка карточки и аккуратный внешний glow. Самый «премиальный» и графичный вариант.</div>
+    </div>
+
+    <!-- D -->
+    <div class="option v-sheen">
+      <div class="option-head">
+        <div class="option-title">D. Glass sheen</div>
+        <span class="tag">стекло</span>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="hero">
+            <div class="hero-top"><span>Общий баланс</span><span class="delta">▲ +2 316 Br</span></div>
+            <div class="amount">2 316 Br</div>
+            <div class="chips"><span class="chip active">Все счета</span><span class="chip">Основной</span><span class="chip">Наличные</span></div>
+            <svg class="spark" viewBox="0 0 260 62" preserveAspectRatio="none">
+              <path class="fill" d="M0 54 C 24 52 44 49 66 40 S 104 24 132 29 S 188 18 214 12 S 246 6 260 7 L260 62 L0 62 Z"/>
+              <path class="line" d="M0 54 C 24 52 44 49 66 40 S 104 24 132 29 S 188 18 214 12 S 246 6 260 7"/>
+            </svg>
+          </div>
+          <div class="mini">
+            <div class="row"><span>Лимит на месяц</span><span class="muted">Осталось 796 Br</span></div>
+            <div class="bar"><span></span></div>
+            <div class="row tiny"><span>Потрачено 1 204 Br из 2 000 Br</span><span>44 Br/дн</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="option-desc">Диагональный блик по карточке и почти незаметный цветной отсвет. Ощущение матового стекла, минимум цвета.</div>
+    </div>
+
+    <!-- E -->
+    <div class="option v-corner">
+      <div class="option-head">
+        <div class="option-title">E. Corner light</div>
+        <span class="tag">минимализм</span>
+      </div>
+      <div class="stage">
+        <div class="mock">
+          <div class="hero">
+            <div class="hero-top"><span>Общий баланс</span><span class="delta">▲ +2 316 Br</span></div>
+            <div class="amount">2 316 Br</div>
+            <div class="chips"><span class="chip active">Все счета</span><span class="chip">Основной</span><span class="chip">Наличные</span></div>
+            <svg class="spark" viewBox="0 0 260 62" preserveAspectRatio="none">
+              <path class="fill" d="M0 54 C 24 52 44 49 66 40 S 104 24 132 29 S 188 18 214 12 S 246 6 260 7 L260 62 L0 62 Z"/>
+              <path class="line" d="M0 54 C 24 52 44 49 66 40 S 104 24 132 29 S 188 18 214 12 S 246 6 260 7"/>
+            </svg>
+          </div>
+          <div class="mini">
+            <div class="row"><span>Лимит на месяц</span><span class="muted">Осталось 796 Br</span></div>
+            <div class="bar"><span></span></div>
+            <div class="row tiny"><span>Потрачено 1 204 Br из 2 000 Br</span><span>44 Br/дн</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="option-desc">Одно маленькое мягкое пятно в правом верхнем углу и свечение только у активных элементов. Самый сдержанный вариант.</div>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    <b>Как это ляжет в MAUI:</b> A и B — <b>RadialGradientBrush</b> на Ellipse/Border + мягкая тень; C — градиентная рамка через два слоя <b>LinearGradientBrush</b> + Shadow; D — диагональный <b>LinearGradientBrush</b>; E — один небольшой radial-градиент + акцентная тень у кнопок. Всё остаётся в текущей теме и подстраивается под акцент.
+  </div>
+</div>
+</body>
+</html>
